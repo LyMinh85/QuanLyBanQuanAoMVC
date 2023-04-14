@@ -36,12 +36,16 @@ class App
         // Require all middlewares
         $this->requireAllFile(App::getRootPath() . "/Middlewares");
 
+        // Require all middlewares
+        $this->requireAllFile(App::getRootPath() . "/Schemas");
+
         $this->router = new Router();
         $this->request = new Request();
     }
 
     // Root url without index.php
-    private function redirectToRoot() {
+    private function redirectToRoot()
+    {
         $current_url = $_SERVER['REQUEST_URI'];
         if (strpos($current_url, 'index.php') !== false) {
             $new_url = str_replace('index.php', '', $current_url);
@@ -85,11 +89,13 @@ class App
         return $this->router;
     }
 
-    public static function getRootPath() {
+    public static function getRootPath()
+    {
         return dirname(__DIR__);
     }
 
-    private function requireAllFile($dir) {
+    private function requireAllFile($dir)
+    {
         foreach (scandir($dir) as $filename) {
             $path = $dir . '/' . $filename;
             if (is_file($path)) {

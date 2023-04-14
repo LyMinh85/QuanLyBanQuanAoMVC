@@ -10,12 +10,8 @@ class DB
     private static $conn = null;
     public static function getDB()
     {
-        try {
-            if (DB::$conn == null || DB::$conn->ping()) {
-                DB::connect();
-            }
-        } catch (\Error $e) {
-            DB::connect();
+        if (DB::$conn === null || !DB::$conn->ping()) {
+            DB::$conn = DB::connect();
         }
 
         return DB::$conn;
@@ -23,22 +19,24 @@ class DB
 
     private static function connect()
     {
-        if (DB::$conn = new \mysqli(
+        $conn = new \mysqli(
             Config::DB_HOSTNAME,
             Config::DB_USERNAME,
             Config::DB_PASSWORD,
             Config::DB_DATABASE
-        )) {
-            if (DB::$conn->connect_error) {
-                die("Connection failed: " . DB::$conn->connect_error);
-            }
-        } else {
-            throw new \Exception("Can't connect to database.");
+        );
+        if ($conn->connect_error) {
+            throw new \Exception("Connection failed: " . DB::$conn->connect_error);
         }
+
+        return $conn;
     }
 
     public static function close()
     {
-        return DB::$conn->close();
+        if (DB::$conn) {
+            DB::$conn->close();
+            DB::$conn = null;
+        }
     }
 }

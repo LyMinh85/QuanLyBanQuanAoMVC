@@ -226,6 +226,11 @@ class Router
         if (!method_exists($controller, $method))
             throw new \Exception("Method $method is not exists in controller $controller.", 404);
 
+        if (!method_exists($controller, "register"))
+            throw new \Exception("Method register is not exists in controller $controller.", 404);
+
+        $controller->register();
+
         // Run middlewares
         foreach ($controller->getMiddlewares() as $middleware) {
             $middleware->execute($this->request);
@@ -264,7 +269,7 @@ class Router
                         if (!isset($queryParts[0]) || !isset($queryParts[1])) {
                             throw new \Exception("Query '$query' does not accept.", 404);
                         }
-                        $this->queries[] = [$queryParts[0] => $queryParts[1]];
+                        $this->queries[$queryParts[0]] = $queryParts[1];
                     }
                 }
             } else {

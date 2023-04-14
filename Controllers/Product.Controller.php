@@ -6,24 +6,40 @@ use Core\BaseController;
 use Core\Response;
 use Core\Validate;
 use Middlewares\AuthMiddleware;
-use Models\Product;
+use Models\ProductModel;
+use Schemas\Product;
 
 class ProductController extends BaseController
-{
-    public function __construct()
+{   
+    private ProductModel $productModel;
+    public function register() 
     {
         $this->registerMiddleware(new AuthMiddleware());
+        $this->productModel = new ProductModel();
     }
 
-    public function getAll()
+    public function getProducts()
     {
-        $products = Product::getAll();
-        Response::sendJson($products);
+        // Cast to int if not is a number return 0
+        $resultPerPage = 10;
+        $page = (int) $this->getQuery("page");
+        if ($page == 0) {
+            $page = 1;
+        }
+        $numberOfPage = $this->productModel->getNumberOfPage($resultPerPage);
+        $products = $this->productModel->getProducts($page, $resultPerPage);
+        Response::sendJson([
+            "pagination" => [
+                "currentPage" => $page,
+                "numberOfPage" => $numberOfPage
+            ],
+            "products" => $products
+        ]);
     }
 
     public function getProduct(int $id)
     {
-        $product = Product::getProduct($id);
+        $product = $this->productModel->getById($id);
         Response::logger($this->queries);
         Response::sendJson($product);
     }
@@ -33,16 +49,16 @@ class ProductController extends BaseController
         $bodyData = Validate::getBodyData(['name']);
 
         $product = new Product(1, $bodyData["name"]);
-        if (Product::addProduct($product)) {
-            $this->getAll();
+        if ($this->productModel->addProduct($product)) {
+            $this->getProducts();
         } else {
-            $this->getAll();
+            $this->getProducts();
         }
     }
 
     public function deleteProduct($id)
     {
-        if (Product::deleteProduct($id)) {
+        if ($this->productModel->deleteProduct($id)) {
             Response::sendJson("Delete success");
         } else {
             Response::sendJson("Failed to delete product: id = $id", 400);
@@ -54,7 +70,7 @@ class ProductController extends BaseController
         $bodyData = Validate::getBodyData(['name']);
 
         $product = new Product($id, $bodyData['name']);
-        if (Product::updateProduct($product)) {
+        if ($this->productModel->updateProduct($product)) {
             Response::sendJson("Update success");
         } else {
             Response::sendJson("Failed to update product: id = $id", 400);

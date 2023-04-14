@@ -5,7 +5,7 @@
 
 - Request:
   - Get url, queryString, method ✅
-  - Get cookie, session, localStorage ❌
+  - Get cookie, session, localStorage, bodydata of PACTCH, PUT ❌
 - Router:
   - Routing to controller ✅
   - Routing with method ✅
@@ -36,6 +36,13 @@
 
 ## Document
 
+### Naming file rule
+
+Files in Controllers folder: `{controllerName}.Controller.php`
+Files in Models folder: `{modelName}.Model.php`
+Files in Middlewares folder: `{middlewareName}.middleware.php`
+Files in View folder: `{viewName}.php`
+
 ### Add a new route
 
 Creating a route '/' with 'GET' method call a method index() in Home Controller:
@@ -59,18 +66,23 @@ Getting parameters:
 
 // Controllers/Product.Controller.php
 <?php
-    namespace Controllers;
-    use Models\Product;
-    class ProductController extends BaseController {
-        ...some codes
+namespace Controllers;
 
-        public function getProduct(int $id) {
-            $product = Product::getProduct($id);
-            Response::sendJson($product);
-        }
-
-        ...some codes
+class ProductController extends BaseController
+{
+    private ProductModel $productModel;
+    public function __construct()
+    {
+        $this->registerMiddleware(new AuthMiddleware());
+        $this->productModel = new ProductModel();
     }
+
+    public function getAll()
+    {
+        $products = $this->productModel->getAll();
+        Response::sendJson($products);
+    }
+}
 ?>
 ```
 
@@ -91,35 +103,26 @@ Using callback function:
 ```php
 // Models/Product.php
 <?php
-
 namespace Models;
 
 use Core\DB;
+use Schemas\Product;
 
-class Product {
-    public $id;
-    public $name;
+class ProductModel {
 
-    public function __construct($id, $name) {
-        $this->id = $id;
-        $this->name = $name;
-    }
-    private static function convertRowToProduct($row) {
+    private function convertRowToProduct($row) {
         return new Product($row["id_product"], $row["name"]);
     }
 
-    public static function getProduct($id) {
-        $result = DB::getDB()->execute_query(
-            "SELECT * FROM product WHERE id_product = ?",
-            [$id]
-        );
-        // Should close DB after done query.
+    public function getAll(): array {
+        $products = [];
+        $sql = "SELECT * FROM product";
+        $result = DB::getDB()->execute_query($sql);
         DB::close();
-        $product = null;
-        if ($row = $result->fetch_assoc()) {
-            $product = Product::convertRowToProduct($row);
+        while ($row = $result->fetch_assoc()) {
+            $products[] = $this->convertRowToProduct($row);
         }
-        return $product;
+        return $products;
     }
 }
 ```
@@ -135,7 +138,7 @@ class Product {
         ...some codes
 
         public function getProduct(int $id) {
-            $product = Product::getProduct($id);
+            $product = $this->productModel->getProduct($id);
             View::render("ProductDetail", [
                 'product' => $product,
             ]);
@@ -152,25 +155,23 @@ class Product {
 // Controllers/Product.Controller.php
 <?php
     namespace Controllers;
-    use Models\Product;
+    use Models\ProductModel;
     class ProductController extends BaseController {
-        ...some codes
 
         // @POST method
-        public function updateProduct($id)
+        public function updateProduct(int $id)
         {
-            // Check require and get require bodydata
+            // Check and get require bodydata
             $bodyData = Validate::getBodyData(['name']);
 
             $product = new Product($id, $bodyData['name']);
-            if (Product::updateProduct($product)) {
+            if ($this->productModel->updateProduct($product)) {
                 Response::sendJson("Update success");
             } else {
                 Response::sendJson("Failed to update product: id = $id", 400);
             }
         }
 
-        ...some codes
     }
 ?>
 ```
@@ -263,3 +264,8 @@ class ProductController extends BaseController
 
 8. Error.php
    - `Error` là class custom lại thông báo khi có Error hoặc Exception
+
+## Reference
+
+- [PHP-MVC-REST-API](https://github.com/afgprogrammer/PHP-MVC-REST-API)
+- [php-mvc](https://github.com/daveh/php-mvc)

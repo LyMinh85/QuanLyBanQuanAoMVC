@@ -71,9 +71,8 @@ namespace Controllers;
 class ProductController extends BaseController
 {
     private ProductModel $productModel;
-    public function __construct()
+    public function register()
     {
-        $this->registerMiddleware(new AuthMiddleware());
         $this->productModel = new ProductModel();
     }
 
@@ -135,16 +134,12 @@ class ProductModel {
     namespace Controllers;
     use Models\Product;
     class ProductController extends BaseController {
-        ...some codes
-
         public function getProduct(int $id) {
             $product = $this->productModel->getProduct($id);
             View::render("ProductDetail", [
                 'product' => $product,
             ]);
         }
-
-        ...some codes
     }
 ?>
 ```
@@ -178,7 +173,7 @@ class ProductModel {
 
 ### Using middleware
 
-Creating a middlesware
+Creating a middleware
 
 ```php
 <?php
@@ -209,7 +204,7 @@ use Middlewares\AuthMiddleware;
 
 class ProductController extends BaseController
 {
-    public function __construct() {
+    public function register() {
         $this->registerMiddleware(new AuthMiddleware());
     }
 }

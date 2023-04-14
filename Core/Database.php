@@ -3,12 +3,14 @@
 namespace Core;
 
 use Config;
+use Exception;
 use Helper;
 
 class DB
 {
-    private static $conn = null;
-    public static function getDB()
+    private static \mysqli|null $conn = null;
+
+    public static function getDB() : \mysqli
     {
         if (DB::$conn === null || !DB::$conn->ping()) {
             DB::$conn = DB::connect();
@@ -17,7 +19,10 @@ class DB
         return DB::$conn;
     }
 
-    private static function connect()
+    /**
+     * @throws Exception
+     */
+    private static function connect(): \mysqli
     {
         $conn = new \mysqli(
             Config::DB_HOSTNAME,
@@ -26,13 +31,13 @@ class DB
             Config::DB_DATABASE
         );
         if ($conn->connect_error) {
-            throw new \Exception("Connection failed: " . DB::$conn->connect_error);
+            throw new Exception("Connection failed: " . DB::$conn->connect_error);
         }
 
         return $conn;
     }
 
-    public static function close()
+    public static function close(): void
     {
         if (DB::$conn) {
             DB::$conn->close();

@@ -23,6 +23,9 @@ $app->get('categories/{id:\d+}', 'Category@getById');
 $app->delete('categories/{id:\d+}', 'Category@deleteById');
 $app->post('categories/{id:\d+}', 'Category@updateCategory');
 
+// TypeProduct controller
+$app->get('type-products', "TypeProduct@getTypeProducts");
+
 $app->run();
 
 

@@ -2,7 +2,6 @@
 
 namespace Models;
 
-use Core\DB;
 use Schemas\TypeProduct;
 
 class TypeProductModel {
@@ -15,14 +14,4 @@ class TypeProductModel {
         );
     }
 
-    public function getTypeProducts()
-    {
-        $typeProducts = [];
-        $sql = "Select * from type_product";
-        $result = DB::getDB()->execute_query($sql);
-        while ($row = $result->fetch_assoc()) {
-            $typeProducts[] = $this->convertRowToTypeProduct($row);
-        }
-        return $typeProducts;
-    }
 }

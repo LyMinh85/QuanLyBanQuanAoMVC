@@ -9,17 +9,17 @@ use Schemas\Category;
 
 class CategoryController extends BaseController {
     private CategoryModel $categoryModel;
-    public function register(): void {
+    public function register() {
         $this->categoryModel = new CategoryModel();
     }
 
     public function getCategories(): void {
-        $page = $this->getQuery('page');
-        $resultsPerPage = $this->getQuery('resultsPerPage');
+        $page = (int) $this->getQuery('page');
+        $resultsPerPage = (int) $this->getQuery('resultsPerPage');
         $name = $this->getQuery('name');
 
-        $page = is_null($page) ? 1 : $page;
-        $resultsPerPage = is_null($resultsPerPage) ? 20 : $resultsPerPage;
+        $page = $page == 0 ? 1 : $page;
+        $resultsPerPage = $resultsPerPage == 0 ? 20 : $resultsPerPage;
 
         $numberOfPage = $this->categoryModel->getNumberOfPage($resultsPerPage);
         
@@ -38,7 +38,7 @@ class CategoryController extends BaseController {
         ]);
     }
 
-    public function getById(int $id): void {
+    public function getById(int $id) {
         $category = $this->categoryModel->getById($id);
         if (is_null($category)) {
             Response::sendJson("Not found");
@@ -46,7 +46,7 @@ class CategoryController extends BaseController {
         Response::sendJson($category);
     }
 
-    public function deleteById(int $id): void {
+    public function deleteById(int $id) {
         if ($this->categoryModel->deleteById($id)) {
             Response::sendJson("Deleted category successfully");
         } else {
@@ -54,7 +54,7 @@ class CategoryController extends BaseController {
         }
     }
 
-    public function addCategory(): void {
+    public function addCategory() {
         $bodyData = Validate::getBodyData(['name']);
         $name = $bodyData['name'];
         if ($this->categoryModel->addCategory($name)) {
@@ -64,7 +64,7 @@ class CategoryController extends BaseController {
         }
     }
 
-    public function updateCategory(int $id): void {
+    public function updateCategory(int $id) {
         $bodyDate = Validate::getBodyData(['name']);
         $name = $bodyDate['name'];
         $category = new Category($id, $name);

@@ -47,7 +47,6 @@ class CustomerController extends BaseController{
         }else{
             Response::sendJson($customer);
         }
-
     }
     public function deleteById(int $id){
         if ($this->customerModel->deleteByID($id)){

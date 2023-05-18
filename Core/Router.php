@@ -169,7 +169,7 @@ class Router
      * This function receives a URL, removes any query string variables, 
      * get matches Route, and then either calls a callback function 
      * or runs a controller method based on the matched route.
-     * If no route is found, it throws an exception with a 404 status code.
+     * If no route is found, it throws an exception with a 404 productStatus code.
      * @param mixed $url
      * @throws \Exception
      * @return void
@@ -193,7 +193,7 @@ class Router
      * This function runs the controller method specified in the Route's callback.
      * It does this by parsing the callback string, finding the controller file, importing it,
      * instantiating the controller class, and calling the specified method on it.
-     * If any errors occur, it throws an exception with a 404 status code.
+     * If any errors occur, it throws an exception with a 404 productStatus code.
      * @param Route $route
      * @throws \Exception
      * @return mixed

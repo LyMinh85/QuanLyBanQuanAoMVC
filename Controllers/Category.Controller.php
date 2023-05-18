@@ -14,16 +14,15 @@ class CategoryController extends BaseController {
     }
 
     public function getCategories(): void {
-        $page = $this->getQuery('page');
-        $resultsPerPage = $this->getQuery('resultsPerPage');
+        $page = (int) $this->getQuery('page');
+        $resultsPerPage = (int) $this->getQuery('resultsPerPage');
         $name = $this->getQuery('name');
 
-        $page = is_null($page) ? 1 : $page;
-        $resultsPerPage = is_null($resultsPerPage) ? 20 : $resultsPerPage;
+        $page = $page == 0 ? 1 : $page;
+        $resultsPerPage = $resultsPerPage == 0 ? 20 : $resultsPerPage;
 
         $numberOfPage = $this->categoryModel->getNumberOfPage($resultsPerPage);
         
-        $categories = [];
         if (!is_null($name)) {
             $categories = $this->categoryModel->findByName($page, $resultsPerPage, $name);
         } else {
@@ -42,8 +41,9 @@ class CategoryController extends BaseController {
         $category = $this->categoryModel->getById($id);
         if (is_null($category)) {
             Response::sendJson("Not found");
+        } else {
+            Response::sendJson($category);
         }
-        Response::sendJson($category);
     }
 
     public function deleteById(int $id): void {
@@ -67,7 +67,8 @@ class CategoryController extends BaseController {
     public function updateCategory(int $id): void {
         $bodyDate = Validate::getBodyData(['name']);
         $name = $bodyDate['name'];
-        $category = new Category($id, $name);
+        $category = $this->categoryModel->getById($id);
+        $category->setName($name);
         if ($this->categoryModel->updateCategory($category)) {
             Response::sendJson($category);
         } else {

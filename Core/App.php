@@ -39,6 +39,9 @@ class App
         // Require all middlewares
         $this->requireAllFile(App::getRootPath() . "/Schemas");
 
+        // Require all Enums
+        $this->requireAllFile(App::getRootPath() . "/Enums");
+
         $this->router = new Router();
         $this->request = new Request();
     }

@@ -25,6 +25,23 @@ $app->post('categories/{id:\d+}', 'Category@updateCategory');
 
 // TypeProduct controller
 $app->get('type-products', "TypeProduct@getTypeProducts");
+$app->post('type-products', "TypeProduct@addTypeProduct");
+$app->post('type-products/{id:\d+}', "TypeProduct@updateById");
+$app->delete('type-products/{id:\d+}', "TypeProduct@deleteById");
+
+
+// ProductVariant controller
+$app->get('products/variants', "ProductVariant@getProductVariants");
+$app->post('products/variants', "ProductVariant@addProductVariant");
+
+// Invoice
+$app->get('invoices', "Invoice@getInvoices");
+$app->post('invoices', "Invoice@addInvoice");
+
+
+// Login
+$app->get("login", 'Home@loginPage');
+$app->post('login', 'Home@login');
 
 $app->run();
 

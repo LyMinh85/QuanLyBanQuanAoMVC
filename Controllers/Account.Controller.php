@@ -7,6 +7,8 @@ use Core\BaseController;
 use Core\Response;
 use Core\Validate;
 use Models\AccountModel;
+use Schemas\Account;
+use function Sodium\add;
 
 class AccountController extends BaseController{
     private AccountModel $accountModel;
@@ -16,14 +18,14 @@ class AccountController extends BaseController{
     public function getAccounts(): void{
         $page = (int) $this->getQuery('page');
         $resultPerPage = (int) $this->getQuery('resultPerPage');
-        $username = $this->getQuery('username');
+        $name = $this->getQuery('name');
 
         $page = $page == 0 ? 1 : $page;
         $resultPerPage = $resultPerPage == 0 ? 20 : $resultPerPage;
         $numberOfPage = $this->accountModel->getNumberOfPage($resultPerPage);
         $accounts = [];
-        if (!is_null($username)){
-            $accounts = $this->accountModel->findByName($page, $resultPerPage, $username);
+        if (!is_null($name)){
+            $accounts = $this->accountModel->findByName($page, $resultPerPage, $name);
         }
         else{
             $accounts = $this->accountModel->getAccounts($page, $resultPerPage);
@@ -54,26 +56,51 @@ class AccountController extends BaseController{
     }
 
     public function addAccount(){
-        $bodyData = Validate::getBodyData(['username','password']);
+        $bodyData = Validate::getBodyData(['username','password','name','gender','birthday','phone','address','email']);
         $username = $bodyData['username'];
         $password = $bodyData['password'];
-        if ($this->accountModel->addAccount($username, $password)){
+        $name = $bodyData['name'];
+        $gender = $bodyData['gender'];
+        $input_birthday = $bodyData['birthday'];
+        $birthday = \DateTime::createFromFormat('d/m/Y',$input_birthday);
+        $phone = $bodyData['phone'];
+        $address = $bodyData['address'];
+        $email = $bodyData['email'];
+        if ($this->accountModel->addAccount($username, $password,$name, $gender,$birthday, $phone, $address,$email)){
             Response::sendJson("Add success");
         } else{
             Response::sendJson("Failed to Add!!");
         }
     }
     public function updateAccount(int $id){
-        $bodyData = Validate::getBodyData(['username', 'password']);
+        $bodyData = Validate::getBodyData(['username','password','name','gender','birthday','phone','address','email']);
         $username = $bodyData['username'];
         $password = $bodyData['password'];
-        $account = $this->accountModel->getById($id);
-        $account->setUsername($username);
-        $account->setPassword($password);
+        $name = $bodyData['name'];
+        $gender = $bodyData['gender'];
+        $input_birthday = $bodyData['birthday'];
+        $birthday = \DateTime::createFromFormat('d/m/Y',$input_birthday);
+        $phone = $bodyData['phone'];
+        $address = $bodyData['address'];
+        $email = $bodyData['email'];
+
+        $account = new Account();
+
+        $account->id_account = $id;
+        $account->username = $username;
+        $account->password = $password;
+        $account->name = $name;
+        $account->gender = $gender;
+        $account->birthday = $birthday;
+        $account->phone = $phone;
+        $account->address = $address;
+        $account->email = $email;
+
         if ($this->accountModel->updateAccount($account)){
             Response::sendJson($account);
         }else{
             Response::sendJson("Fail to Update");
         }
     }
+
 }

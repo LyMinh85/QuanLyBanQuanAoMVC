@@ -12,7 +12,14 @@ class AccountModel {
             $row["id_account"],
             $row["username"],
             $row["password"],
-            (int) $row["id_group_roles"]
+            (int) $row["id_group_roles"],
+            (int) $row['id_customer'],
+            $row['name'],
+            $row['gender'],
+            \DateTime::createFromFormat('Y-m-d', $row['birthday']),
+            $row['phone'],
+            $row['address'],
+            $row['email']
         );
     }
 
@@ -44,9 +51,10 @@ class AccountModel {
         return null;
     }
 
-    public function  addAccount(string $username, string $password): bool{
-        $sql = "INSERT INTO account(username, password) values (?, ?)";
-        $result = DB::getDB()-> execute_query($sql, [$username, $password]);
+    public function  addAccount(string $username, string $password, string $name, string $gender,
+                                \DateTime $birthday, string $phone, string $address, string $email): bool{
+        $sql = "INSERT INTO account(username, password, name, gender, birthday, phone, address, email) values (?, ?, ?, ?, ?, ?, ?, ?)";
+        $result = DB::getDB()-> execute_query($sql, [$username, $password, $name,$gender,$birthday->format('Y-m-d'), $phone,$address, $email]);
         if (!$result)
             return false;
 
@@ -56,11 +64,17 @@ class AccountModel {
     }
 
     public function  updateAccount(Account $account): bool{
-        $sql = "UPDATE account SET username = ?, password = ? WHERE id_account = ?";
+        $sql = "UPDATE account SET username = ?, password = ?, name = ?, gender = ?, birthday = ?, phone = ?, address = ?, email = ? WHERE id_account = ?";
         $result = DB::getDB()->execute_query($sql, [
-            $account->getUsername(),
-            $account->getPassword(),
-            $account->getIdAccount()
+            $account->username,
+            $account->password,
+            $account->name,
+            $account->gender,
+            $account->birthday->format('Y-m-d'),
+            $account->phone,
+            $account->address,
+            $account->email,
+            $account->id_account
         ]);
         if (!$result)
             return false;
@@ -86,15 +100,15 @@ class AccountModel {
         return false;
     }
 
-    public function findByName(int $page, int $resultsPerPage, string $username): array {
-        $pageFirstResult = ($page-1) * $resultsPerPage;
-        $sql = "SELECT * FROM account WHERE account.username LIKE ? LIMIT $pageFirstResult, $resultsPerPage";
-        $result = DB::getDB()->execute_query($sql, ["%$username%"]);
-        $accounts = [];
-        while ($row = $result->fetch_assoc()) {
-            $accounts[] = $this->convertRowToAccount($row);
+    public function findByName(int $page, int $resultsPerPage, string $name): array{
+        $pageFirstResult =  ($page - 1 ) * $resultsPerPage;
+        $sql = "SELECT * FROM account WHERE account.name LIKE ? LIMIT $pageFirstResult, $resultsPerPage ";
+        $result = DB::getDB()->execute_query($sql,["%$name%"]);
+        $customers = [];
+        while ($row = $result->fetch_assoc()){
+            $customers[] = $this-> convertRowToAccount($row);
         }
-        return $accounts;
+        return $customers;
     }
 
 

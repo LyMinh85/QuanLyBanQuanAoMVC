@@ -20,7 +20,8 @@ class CategoryModel {
         $resultCount = DB::getDB()->execute_query($sqlCount);
         $row = $resultCount->fetch_array();
         $total = $row[0];
-        return ceil($total/$resultsPerPage);
+        $numberOfPage = ceil($total/$resultsPerPage);
+        return $numberOfPage;
     }
 
     public function getCategories(int $page, int $resultsPerPage): array {
@@ -87,8 +88,8 @@ class CategoryModel {
     public function updateCategory(Category $category): bool {
         $sql = "UPDATE category SET name = ? WHERE id_category = ?";
         $result = DB::getDB()->execute_query($sql, [
-            $category->getName(),
-            $category->getId()
+            $category->name,
+            $category->id
         ]);
 
         if (!$result)

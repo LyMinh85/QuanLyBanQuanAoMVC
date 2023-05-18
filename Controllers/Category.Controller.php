@@ -9,7 +9,7 @@ use Schemas\Category;
 
 class CategoryController extends BaseController {
     private CategoryModel $categoryModel;
-    public function register(): void {
+    public function register() {
         $this->categoryModel = new CategoryModel();
     }
 
@@ -37,7 +37,7 @@ class CategoryController extends BaseController {
         ]);
     }
 
-    public function getById(int $id): void {
+    public function getById(int $id) {
         $category = $this->categoryModel->getById($id);
         if (is_null($category)) {
             Response::sendJson("Not found");
@@ -46,7 +46,7 @@ class CategoryController extends BaseController {
         }
     }
 
-    public function deleteById(int $id): void {
+    public function deleteById(int $id) {
         if ($this->categoryModel->deleteById($id)) {
             Response::sendJson("Deleted category successfully");
         } else {
@@ -54,7 +54,7 @@ class CategoryController extends BaseController {
         }
     }
 
-    public function addCategory(): void {
+    public function addCategory() {
         $bodyData = Validate::getBodyData(['name']);
         $name = $bodyData['name'];
         if ($this->categoryModel->addCategory($name)) {
@@ -64,7 +64,7 @@ class CategoryController extends BaseController {
         }
     }
 
-    public function updateCategory(int $id): void {
+    public function updateCategory(int $id) {
         $bodyDate = Validate::getBodyData(['name']);
         $name = $bodyDate['name'];
         $category = $this->categoryModel->getById($id);

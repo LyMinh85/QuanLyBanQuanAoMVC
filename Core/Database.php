@@ -12,7 +12,7 @@ class DB
 
     public static function getDB() : \mysqli
     {
-        if (DB::$conn === null || !DB::$conn->ping()) {
+        if (DB::$conn === null) {
             DB::$conn = DB::connect();
         }
 

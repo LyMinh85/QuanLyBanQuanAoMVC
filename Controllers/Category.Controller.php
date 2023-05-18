@@ -23,7 +23,6 @@ class CategoryController extends BaseController {
 
         $numberOfPage = $this->categoryModel->getNumberOfPage($resultsPerPage);
         
-        $categories = [];
         if (!is_null($name)) {
             $categories = $this->categoryModel->findByName($page, $resultsPerPage, $name);
         } else {
@@ -42,8 +41,9 @@ class CategoryController extends BaseController {
         $category = $this->categoryModel->getById($id);
         if (is_null($category)) {
             Response::sendJson("Not found");
+        } else {
+            Response::sendJson($category);
         }
-        Response::sendJson($category);
     }
 
     public function deleteById(int $id) {
@@ -67,7 +67,8 @@ class CategoryController extends BaseController {
     public function updateCategory(int $id) {
         $bodyDate = Validate::getBodyData(['name']);
         $name = $bodyDate['name'];
-        $category = new Category($id, $name);
+        $category = $this->categoryModel->getById($id);
+        $category->setName($name);
         if ($this->categoryModel->updateCategory($category)) {
             Response::sendJson($category);
         } else {

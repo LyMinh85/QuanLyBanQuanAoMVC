@@ -14,7 +14,11 @@ class Validate {
             }
         }
         if (count($invalidFields) !== 0) {
-            Response::sendJson($invalidFields, 400);
+//            Response::sendJson($invalidFields, 400);
+            return [
+                'error' => true,
+                'missingFields' => $invalidFields
+            ];
         }
         return $bodyData;
     }

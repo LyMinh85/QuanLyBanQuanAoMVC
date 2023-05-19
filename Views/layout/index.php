@@ -10,6 +10,21 @@
       integrity="sha384-aFq/bzH65dt+w6FI2ooMVUpc+21e0SRygnTpmBvdBgSdnuTN7QbdgL+OapgHtvPp"
       crossorigin="anonymous"
     />
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css"
+        rel="stylesheet"
+    />
+
+    <style>
+      .ms-n5 {
+        margin-left: -40px;
+      }
+      .ms-n5:hover {
+        color: var(--bs-primary);
+      }
+    </style>
+
     <title>Hello</title>
   </head>
   <body>
@@ -22,7 +37,5 @@
       crossorigin="anonymous"
     ></script>
 
-    <script>
-    </script>
   </body>
 </html>

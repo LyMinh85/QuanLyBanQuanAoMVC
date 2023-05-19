@@ -51,8 +51,7 @@ class App
     {
         $current_url = $_SERVER['REQUEST_URI'];
         if (strpos($current_url, 'index.php') !== false) {
-            $new_url = str_replace('index.php', '', $current_url);
-            Response::redirect($new_url);
+            Response::redirect('');
         }
     }
 

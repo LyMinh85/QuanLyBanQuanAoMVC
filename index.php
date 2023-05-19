@@ -59,10 +59,16 @@ $app->post('products/variants', "ProductVariant@addProductVariant");
 $app->get('invoices', "Invoice@getInvoices");
 $app->post('invoices', "Invoice@addInvoice");
 
+// Sign u[
+$app->get('sign-up', 'Account@signUpPage');
+$app->post('sign-up', 'Account@signUp');
 
 // Login
-$app->get("login", 'Home@loginPage');
-$app->post('login', 'Home@login');
+$app->get("login", 'Account@loginPage');
+$app->post('login', 'Account@login');
+
+// logout
+$app->get('logout', 'Account@logout');
 
 $app->run();
 

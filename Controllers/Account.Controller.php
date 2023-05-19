@@ -6,13 +6,15 @@ namespace Controllers;
 use Core\BaseController;
 use Core\Response;
 use Core\Validate;
+use Core\View;
 use Models\AccountModel;
 use Schemas\Account;
 use function Sodium\add;
 
 class AccountController extends BaseController{
     private AccountModel $accountModel;
-    public function register(){
+    public function register(): void
+    {
         $this->accountModel = new AccountModel();
     }
     public function getAccounts(): void{
@@ -103,4 +105,97 @@ class AccountController extends BaseController{
         }
     }
 
+    // GET: /sign-up
+    public function signUpPage(): void {
+        View::render('sign-up');
+    }
+
+    // POST: /sign-up
+    public function signUp(): void {
+        $bodyData = Validate::getBodyData(['username','password','name','gender','birthday','phone','address','email']);
+        if (isset($bodyData['error'])) {
+            View::render('sign-up', [
+                'missingFields' => $bodyData['missingFields']
+            ]);
+        }
+
+        $username = $bodyData['username'];
+        $password = $bodyData['password'];
+        $name = $bodyData['name'];
+        $gender = $bodyData['gender'];
+        $input_birthday = $bodyData['birthday'];
+        $birthday = \DateTime::createFromFormat('Y-m-d',$input_birthday);
+        $phone = $bodyData['phone'];
+        $address = $bodyData['address'];
+        $email = $bodyData['email'];
+
+        if ($this->accountModel->addAccount($username, $password,$name, $gender,$birthday, $phone, $address,$email)){
+            Response::sendJson("Created successfully");
+        } else{
+            View::render('sign-up');
+        }
+
+    }
+
+    // GET: /login
+    public function loginPage(): void {
+        session_start();
+
+        if (isset($_SESSION['user'])) {
+            Response::redirect('/');
+        }
+
+        View::render("login");
+    }
+
+    // POST: /login
+    public function login(): void {
+        session_start();
+
+        // Nếu đã đăng nhập
+        if (isset($_SESSION['user'])) {
+            View::render('home');
+        }
+
+        $body = Validate::getBodyData(['username', 'password']);
+        $username = $body['username'];
+        $password = $body['password'];
+
+        // TODO: Find user by username and check if password is correct
+        $account = $this->accountModel->getByUsername($username);
+        if ($account == null) {
+            View::render('login', [
+                'error' => 'Wrong username or password'
+            ]);
+        }
+
+        if ($account->password != $password) {
+            View::render('login', [
+                'error' => 'Wrong username or password'
+            ]);
+        }
+
+        // Store user information
+        $user = [
+            'id' => $account->id_account,
+            'username' => $account->username,
+        ];
+
+        $_SESSION['user'] = $user;
+
+        Response::redirect('/');
+    }
+
+    // GET: /logout
+    public function logout(): void {
+        session_start();
+
+        // Nếu đã đăng nhập
+        if (isset($_SESSION['user'])) {
+            unset($_SESSION['user']);
+            Response::redirect('/');
+        }
+
+        Response::redirect('/');
+    }
 }

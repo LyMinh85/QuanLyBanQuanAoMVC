@@ -5,25 +5,27 @@ namespace Models;
 use Core\DB;
 use Schemas\Account;
 
-class AccountModel {
+class AccountModel
+{
 
-    private function convertRowToAccount($row): Account{
-        return new Account(
-            $row["id_account"],
-            $row["username"],
-            $row["password"],
-            (int) $row["id_group_roles"],
-            (int) $row['id_customer'],
-            $row['name'],
-            $row['gender'],
-            \DateTime::createFromFormat('Y-m-d', $row['birthday']),
-            $row['phone'],
-            $row['address'],
-            $row['email']
-        );
+    private function convertRowToAccount($row): Account
+    {
+        $account = new Account();
+        $account->id_account = $row["id_account"];
+        $account->username = $row["username"];
+        $account->password = $row["password"];
+        $account->id_group_roles = (int)$row["id_group_roles"];
+        $account->name = $row['name'];
+        $account->gender = $row['gender'];
+        $account->birthday = \DateTime::createFromFormat('Y-m-d', $row['birthday']);
+        $account->phone = $row['phone'];
+        $account->address = $row['address'];
+        $account->email = $row['email'];
+        return $account;
     }
 
-    public function getAccounts(int $page, int $resultPerPage): array{
+    public function getAccounts(int $page, int $resultPerPage): array
+    {
         $pageFirstResult = ($page - 1) * $resultPerPage;
         $sql = "SELECT * FROM account LIMIT $pageFirstResult, $resultPerPage";
         $result = DB::getDB()->execute_query($sql);
@@ -33,28 +35,42 @@ class AccountModel {
         }
         return $accounts;
     }
-    public function getNumberOfPage(int $resultsPerPage):int {
+
+    public function getNumberOfPage(int $resultsPerPage): int
+    {
         $sqlCount = "SELECT count(1) from account";
         $resultCount = DB::getDB()->execute_query($sqlCount);
         $row = $resultCount->fetch_array();
         $total = $row[0];
-        $numberOfPage = ceil($total/$resultsPerPage);
+        $numberOfPage = ceil($total / $resultsPerPage);
         return $numberOfPage;
     }
 
-    public function getById(int $id): Account|null{
+    public function getById(int $id): Account|null
+    {
         $sql = "SELECT * FROM account WHERE id_account = ?";
-        $result = DB::getDB()->execute_query($sql,[$id]);
-        if ($row = $result->fetch_assoc()){
+        $result = DB::getDB()->execute_query($sql, [$id]);
+        if ($row = $result->fetch_assoc()) {
             return $this->convertRowToAccount($row);
         }
         return null;
     }
 
-    public function  addAccount(string $username, string $password, string $name, string $gender,
-                                \DateTime $birthday, string $phone, string $address, string $email): bool{
+    public function getByUsername(string $username): Account|null
+    {
+        $sql = "SELECT * FROM account WHERE username = ?";
+        $result = DB::getDB()->execute_query($sql, [$username]);
+        if ($row = $result->fetch_assoc()) {
+            return $this->convertRowToAccount($row);
+        }
+        return null;
+    }
+
+    public function addAccount(string    $username, string $password, string $name, string $gender,
+                               \DateTime $birthday, string $phone, string $address, string $email): bool
+    {
         $sql = "INSERT INTO account(username, password, name, gender, birthday, phone, address, email) values (?, ?, ?, ?, ?, ?, ?, ?)";
-        $result = DB::getDB()-> execute_query($sql, [$username, $password, $name,$gender,$birthday->format('Y-m-d'), $phone,$address, $email]);
+        $result = DB::getDB()->execute_query($sql, [$username, $password, $name, $gender, $birthday->format('Y-m-d'), $phone, $address, $email]);
         if (!$result)
             return false;
 
@@ -63,7 +79,8 @@ class AccountModel {
         return false;
     }
 
-    public function  updateAccount(Account $account): bool{
+    public function updateAccount(Account $account): bool
+    {
         $sql = "UPDATE account SET username = ?, password = ?, name = ?, gender = ?, birthday = ?, phone = ?, address = ?, email = ? WHERE id_account = ?";
         $result = DB::getDB()->execute_query($sql, [
             $account->username,
@@ -79,7 +96,7 @@ class AccountModel {
         if (!$result)
             return false;
 
-        if (DB::getDB()->affected_rows > 0){
+        if (DB::getDB()->affected_rows > 0) {
             return true;
         }
 
@@ -87,9 +104,10 @@ class AccountModel {
 
     }
 
-    public function deleteById(int $id_account): bool{
+    public function deleteById(int $id_account): bool
+    {
         $sql = "DELETE FROM account WHERE id_account = ?";
-        $result = DB::getDB()->execute_query($sql,[$id_account]);
+        $result = DB::getDB()->execute_query($sql, [$id_account]);
         if (!$result)
             return false;
 
@@ -100,13 +118,14 @@ class AccountModel {
         return false;
     }
 
-    public function findByName(int $page, int $resultsPerPage, string $name): array{
-        $pageFirstResult =  ($page - 1 ) * $resultsPerPage;
+    public function findByName(int $page, int $resultsPerPage, string $name): array
+    {
+        $pageFirstResult = ($page - 1) * $resultsPerPage;
         $sql = "SELECT * FROM account WHERE account.name LIKE ? LIMIT $pageFirstResult, $resultsPerPage ";
-        $result = DB::getDB()->execute_query($sql,["%$name%"]);
+        $result = DB::getDB()->execute_query($sql, ["%$name%"]);
         $customers = [];
-        while ($row = $result->fetch_assoc()){
-            $customers[] = $this-> convertRowToAccount($row);
+        while ($row = $result->fetch_assoc()) {
+            $customers[] = $this->convertRowToAccount($row);
         }
         return $customers;
     }

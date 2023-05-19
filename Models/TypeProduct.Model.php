@@ -45,7 +45,7 @@ class TypeProductModel {
         $sql = "INSERT INTO $this->DATABASE_NAME(name, id_category, gender) values (?, ?, ?)";
         $result = DB::getDB()->execute_query($sql, [
             $typeProduct->name,
-            $typeProduct->idCategory,
+            $typeProduct->category->id,
             $typeProduct->gender->value,
         ]);
         if (!$result)

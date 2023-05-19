@@ -31,6 +31,7 @@ class Response
 
     public static function redirect($url, $statusCode = 303)
     {
+        $url = \Config::getUrl($url);
         header('Location: ' . $url, true, $statusCode);
         die();
     }

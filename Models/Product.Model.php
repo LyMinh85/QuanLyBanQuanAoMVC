@@ -47,7 +47,7 @@ class ProductModel {
     // Example about conditions:
     // conditions = [['column' => 'name', '$operation' => 'LIKE', 'value' => 'King']]
     public function getNumberOfPageByConditions(
-        int $resultsPerPage, string|null $name, string|null $type, string|null $category,
+        int $resultsPerPage, string|null $name, int $type, int $category,
         int|null $priceMin, int|null $priceMax
     ): int {
         $sqlCount = "
@@ -61,26 +61,26 @@ class ProductModel {
             $list_value[] = "%" . $name . "%";
         }
 
-        if ($type != null) {
+        if ($type != 0) {
             // If array not empty
             if (!empty($list_value)) {
-                $sqlCount .= ' AND tp.name LIKE ? ';
+                $sqlCount .= ' AND tp.id_type_product = ? ';
             } else {
-                $sqlCount .= ' WHERE tp.name LIKE ?';
+                $sqlCount .= ' WHERE tp.id_type_product = ?';
             }
 
-            $list_value[] = "%" . $type . "%";
+            $list_value[] =  $type;
         }
 
-        if ($category != null) {
+        if ($category != 0) {
             // If array not empty
             if (!empty($list_value)) {
-                $sqlCount .= ' AND c.name LIKE ? ';
+                $sqlCount .= ' AND c.id_category = ? ';
             } else {
-                $sqlCount .= ' WHERE c.name LIKE ?';
+                $sqlCount .= ' WHERE c.id_category = ?';
             }
 
-            $list_value[] = "%" . $category . "%";
+            $list_value[] = $category;
         }
 
         if ($priceMin != null) {
@@ -135,7 +135,7 @@ class ProductModel {
     }
 
     public function getProductsByConditions(
-        int $page, int $resultsPerPage, string|null $name, string|null $type, string|null $category,
+        int $page, int $resultsPerPage, string|null $name, int $type, int $category,
         int|null $priceMin, int|null $priceMax
     ): array {
         $pageFirstResult = ($page-1) * $resultsPerPage;
@@ -153,26 +153,26 @@ class ProductModel {
             $list_value[] = "%" . $name . "%";
         }
 
-        if ($type != null) {
+        if ($type != 0) {
             // If array not empty
             if (!empty($list_value)) {
-                $sqlGetProducts .= ' AND tp.name LIKE ? ';
+                $sqlGetProducts .= ' AND tp.id_type_product = ? ';
             } else {
-                $sqlGetProducts .= ' WHERE tp.name LIKE ?';
+                $sqlGetProducts .= ' WHERE tp.id_type_product = ?';
             }
 
-            $list_value[] = "%" . $type . "%";
+            $list_value[] =  $type;
         }
 
-        if ($category != null) {
+        if ($category != 0) {
             // If array not empty
             if (!empty($list_value)) {
-                $sqlGetProducts .= ' AND c.name LIKE ? ';
+                $sqlGetProducts .= ' AND c.id_category = ? ';
             } else {
-                $sqlGetProducts .= ' WHERE c.name LIKE ?';
+                $sqlGetProducts .= ' WHERE c.id_category = ?';
             }
 
-            $list_value[] = "%" . $category . "%";
+            $list_value[] = $category;
         }
 
         if ($priceMin != null) {

@@ -53,6 +53,13 @@ class ProductController extends BaseController
         }
 
         if ($name != null || $type != null || $category != null || $priceRange != null) {
+            if ($type != null) {
+                $type = (int) $type;
+            }
+            if ($category != null) {
+                $category = (int) $category;
+            }
+
             $numberOfPage = $this->productModel->getNumberOfPageByConditions(
                 $resultsPerPage, $name, $type, $category, $priceMin, $priceMax
             );

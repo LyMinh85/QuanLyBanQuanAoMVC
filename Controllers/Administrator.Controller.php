@@ -6,6 +6,7 @@ use Core\View;
 use Middlewares\AuthMiddleware;
 use Models\AccountModel;
 use Models\ProductModel;
+    class AdministratorController extends BaseController
     {
         private ProductModel $productModel;
         public function register(): void
@@ -24,7 +25,6 @@ use Models\ProductModel;
             View::render("administrator");
         }
 
-        private ProductModel $productModel;
         public function ManageProductPage():void {
             $products = $this->productModel->getProducts(1,10);
             View::renderWithoutLayout("manage-products",[

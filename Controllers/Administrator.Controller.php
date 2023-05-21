@@ -4,12 +4,16 @@ namespace Controllers;
 use Core\BaseController;
 use Core\View;
 use Middlewares\AuthMiddleware;
+use Models\AccountModel;
+use Models\ProductModel;
 
 class AdministratorController extends BaseController
     {
+        private ProductModel $productModel;
         public function register(): void
         {
             new AuthMiddleware();
+            $this->productModel = new ProductModel();
         }
 
         public function AdminPage(): void
@@ -20,6 +24,13 @@ class AdministratorController extends BaseController
             }
             \Helper::println("You are in: ", $action);
             View::render("administrator");
+        }
+
+        public function ManagerProductPage(): void {
+            $products = $this->productModel->getProducts(1, 10);
+            View::renderWithoutLayout("manager-product", [
+                'products' => $products
+            ]);
         }
     }
     

@@ -7,6 +7,10 @@ class Config
     public const DB_PASSWORD = '85659712';
     public const DB_DATABASE = 'quan_ly_ban_quan_ao';
     public const SHOW_ERRORS = true;
+    // Đường dẫn bắt đầu từ C:\xampp\htdocs
+    // VD:
+    // Thư mục của project là "C:\xampp\htdocs\web\ban-quan-ao"
+    // Thì PROJECT_NAME = 'web/ban-quan-ao'
     public const PROJECT_NAME = 'ban-quan-ao';
     public static function getRootDir(): string {
         return '/' . self::PROJECT_NAME;

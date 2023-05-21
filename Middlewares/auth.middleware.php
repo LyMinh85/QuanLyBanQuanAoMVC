@@ -9,6 +9,7 @@ use Core\Response;
 class AuthMiddleware extends Middleware {
     // execute a middleware
     public function execute(Request $request) {
-        Response::logger("hello i am AuthMiddleware", "AuthMiddleware");
+        \Helper::println("AuthMiddleware", "Hello from AuthMiddleware");
+        // TODO: Check user permission
     }
 }

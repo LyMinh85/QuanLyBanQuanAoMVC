@@ -1,24 +1,20 @@
-<div class="container row">
-    <div class="col-3">
-        <button id="manager-product-button">Manager product</button>
+<div class="container-fluid" style="margin:0px">
+    
+    <div class="row">
+
+        <form action="" method="post" class="col-md-3 list-group">
+
+            <button type="button" class="btn btn-outline-primary" id="btnManageRole">ManageRole</button>
+            <button type="button" class="btn btn-outline-primary" id="btnManageGroupRole">ManageGroupRole</button>
+            <button type="button" class="btn btn-outline-primary" id="btnManageAccount">ManageAccount</button>
+            <button type="button" class="btn btn-outline-primary" id="btnManageCategory">ManageCategory</button>
+            <button type="button" class="btn btn-outline-primary" id="btnManageType">ManageType</button>
+            <button type="button" class="btn btn-outline-primary" id="btnManageProduction">ManageProduction</button>
+            <button type="button" class="btn btn-outline-primary" id="btnManageInvoice">ManageInvoice</button>
+            <button type="button" class="btn btn-outline-primary" id="btnManageOrder">ManageOrder</button>
+
+        </form>
+
     </div>
 
-    <div class="col-9">
-        <div id="content">
-            Hello
-        </div>
-    </div>
 </div>
-
-
-<script>
-    const managerProductButton = document.querySelector('#manager-product-button');
-    managerProductButton.addEventListener('click', async () => {
-        const response = await fetch("<?php echo Config::getUrl('/administrator/manager-product')?>");
-        const html = await response.text();
-        document.querySelector('#content').innerHTML = html;
-    })
-</script>
-
-
-

@@ -6,7 +6,7 @@ use Helper;
 
 class View
 {
-    public static function render($view, $args = [])
+    public static function render($view, $args = []): void
     {
         $rootPath = dirname(__DIR__);
         $file = "$rootPath/Views/$view.php";

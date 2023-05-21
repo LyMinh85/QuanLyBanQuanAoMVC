@@ -72,7 +72,13 @@
 
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="<?php echo Config::getUrl('/logout') ?>">Logout</a></li>
+
+                            <?php if($user['username'] == "admin"):?>
+                                <li><a class="dropdown-item" href="<?php echo Config::getUrl('/administrator') ?>">Admin</a></li>
+                            <?php endif;?>
+
                         </ul>
+
                     </button>
                 <?php else: ?>
                     <!-- Khi chưa đăng nhập hiện phần này -->

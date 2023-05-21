@@ -70,6 +70,9 @@ $app->post('login', 'Account@login');
 // logout
 $app->get('logout', 'Account@logout');
 
+// administrator
+$app->get('administrator','Administrator@AdminPage');
+
 $app->run();
 
 

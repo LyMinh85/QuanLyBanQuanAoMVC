@@ -75,6 +75,7 @@ $app->get('administrator','Administrator@AdminPage');
 $app->get('administrator/manage-products','Administrator@ManageProductPage');
 $app->get('administrator/manage-products/product-page','Administrator@ProductPage');
 $app->post('administrator/manage-products/product-page/add','Administrator@Add');
+$app->post('administrator/manage-products/product-page/update','Administrator@Update');
 
 $app->get('administrator/manage-roles','Administrator@ManageRolesPage');
 $app->get('administrator/manage-roles/role-pages','Administrator@RolePage');

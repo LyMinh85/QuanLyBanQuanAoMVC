@@ -81,7 +81,7 @@ class ProductVariantModel
         return $productVariants;
     }
 
-    public function getById(int $id): ProductVariant|null {
+    public function getById(int $id) {
         $sql = "
             SELECT pv.id_product_variant, pv.id_product, pv.color, pv.size,
                    pv.quantity, pv.url_image, pv.quantity_purchased,
@@ -92,15 +92,38 @@ class ProductVariantModel
             INNER JOIN product p on pv.id_product = p.id_product
             LEFT JOIN type_product tp on tp.id_type_product = p.id_type_product
             INNER JOIN category c on c.id_category = tp.id_category
-            WHERE id_product_variant = ?
+            WHERE p.id_product = ?
         ";
         $result = DB::getDB()->execute_query($sql, [$id]);
         DB::close();
-        $product = null;
+
         if ($row = $result->fetch_assoc()) {
             $product = $this->convertRowToProductVariant($row);
         }
         return $product;
+    }
+
+    public function getAllProductionVariantByIdProduct(int $id){
+        $sql = "
+            SELECT * FROM product_variant where product_variant.id_product = ? 
+        ";
+
+        $result = DB::getDB()->execute_query($sql,[$id]);
+        DB::close();
+
+        $listProductVariant = [];
+        while ($row = $result->fetch_assoc()) {
+            $productVariant = new ProductVariant();
+            $productVariant->id = (int) $row['id_product_variant'];
+            $productVariant->color = $row['color'];
+            $productVariant->size = ClothingSize::tryFrom($row['size']);
+            $productVariant->quantity = (int) $row['quantity'];
+            $productVariant->urlImage = $row['url_image'];
+            $productVariant->quantityPurchased = (int) $row['quantity_purchased'];
+            $listProductVariant[] = $productVariant;
+        }
+        
+        return $listProductVariant;
     }
 
     public function addProductVariant(ProductVariant $productVariant): bool {

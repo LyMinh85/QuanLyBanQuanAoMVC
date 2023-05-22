@@ -39,7 +39,39 @@
             })
         })
 
+        $("#btnManageRole").click(function(e){
+            e.preventDefault();
 
+            $.ajax({
+                url:"<?php echo Config::getUrl("/administrator/manage-roles")?>",
+                success:function(result){
+                    console.log(result);    
+                    $("#content").html(result);
+                }
+            })
+        })
+        $("#btnManageCategory").click(function(e){
+            e.preventDefault();
+
+            $.ajax({
+                url:"<?php echo Config::getUrl("/administrator/manage-category")?>",
+                success:function(result){
+                    console.log(result);    
+                    $("#content").html(result);
+                }
+            })
+        })
+        $("#btnManageType").click(function(e){
+            e.preventDefault();
+
+            $.ajax({
+                url:"<?php echo Config::getUrl("/administrator/manage-type")?>",
+                success:function(result){
+                    console.log(result);    
+                    $("#content").html(result);
+                }
+            })
+        })
 
     })
 

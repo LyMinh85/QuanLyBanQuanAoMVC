@@ -78,14 +78,14 @@ class CategoryModel {
         return array_values($categories);
     }
 
-//    public function getById(int $id): Category|null {
-//        $sql = "SELECT * FROM category WHERE id_category = ?";
-//        $result = DB::getDB()->execute_query($sql, [$id]);
-//        if ($row = $result->fetch_assoc()) {
-//            return $this->convertRowToCategory($row);
-//        }
-//        return null;
-//    }
+   public function getById(int $id): Category|null {
+       $sql = "SELECT * FROM category WHERE id_category = ?";
+       $result = DB::getDB()->execute_query($sql, [$id]);
+       if ($row = $result->fetch_assoc()) {
+           return $this->convertRowToCategory($row);
+       }
+       return null;
+   }
 
     public function addCategory(string $name): bool {
         $sql = "INSERT INTO category(name) values (?)";

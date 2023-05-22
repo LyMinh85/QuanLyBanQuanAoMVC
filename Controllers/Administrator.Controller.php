@@ -9,8 +9,10 @@ use Models\AccountModel;
 use Models\CategoryModel;
 use Models\ProductModel;
 use Models\ProductVariantModel;
+use Models\RoleModel;
 use Models\TypeProductModel;
 use Schemas\Product;
+use Schemas\Role;
 use Schemas\TypeProduct;
     class AdministratorController extends BaseController
     {
@@ -18,6 +20,7 @@ use Schemas\TypeProduct;
         private ProductVariantModel $productVariantModel;
         private CategoryModel $categoryModel;
         private TypeProductModel $typeProductModel;
+        private RoleModel $roleModel;
         public function register(): void
         {
             new AuthMiddleware();
@@ -25,6 +28,7 @@ use Schemas\TypeProduct;
             $this->productVariantModel = new ProductVariantModel();
             $this->categoryModel = new CategoryModel();
             $this->typeProductModel = new TypeProductModel();
+            $this->roleModel = new RoleModel();
         }
 
         public function AdminPage(): void
@@ -45,10 +49,64 @@ use Schemas\TypeProduct;
             ]);
         }
 
+        public function ManageRolesPage():void {
+            $roles = $this->roleModel->getRoles();
+            // print_r($roles);
+            View::renderWithoutLayout("manage-in-admin/manage-roles",[
+                "roles"=>$roles
+            ]);
+        }
+
+        public function ManageCategoryPage():void{
+            $categories = $this->categoryModel->getCategories(1,10);
+
+            View::renderWithoutLayout("manage-in-admin/manage-category",[
+                "categories"=>$categories
+            ]);
+        }
+
+        public function ManageTypePage():void{
+            $types = $this->typeProductModel->getTypeProducts();
+
+            View::renderWithoutLayout("manage-in-admin/manage-type",[
+                "types"=>$types
+            ]);
+        }
+        //////////////////////////////////////////////////////////////////////////////////////
+        public function RolePage():void {
+            // print_r($id);
+            $id = $this->getQuery('id');
+            print_r($id);
+            $role = $this->roleModel->getById($id);
+            View::renderWithoutLayout("manage-in-admin/role-pages",[
+                "roles"=>$role,
+            ]);
+        }
+        public function CategoryPage():void {
+            // print_r($id);
+            $id = $this->getQuery('id');
+            print_r($id);
+            $categories = $this->categoryModel->getById($id);
+            print_r($categories);
+            View::renderWithoutLayout("manage-in-admin/category-page",[
+                "categories"=>$categories
+            ]);
+        }
+        public function TypePage():void {
+            // print_r($id);
+            $id = $this->getQuery('id');
+            print_r($id);
+            $type = $this->typeProductModel->getById($id);
+            $categories = $this->categoryModel->getCategories(1,10);
+            View::renderWithoutLayout("manage-in-admin/type-page",[
+                "type"=>$type,
+                "categories"=>$categories
+            ]);
+        }
         public function ProductPage():void {
             // print_r($id);
             $id = $this->getQuery('id');
-            // print_r($id);
+            print_r($id);
             $products = $this->productModel->getById($id);
             $productVariants = $this->productVariantModel->getAllProductionVariantByIdProduct($id);   
             $categories = $this->categoryModel->getCategories(1,10);

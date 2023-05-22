@@ -10,7 +10,7 @@ class OrderModel{
     private function convertRowToOrder($row): Order{
         return new Order(
             (int) $row['id_order'],
-            (int) $row['id_customer'],
+            (int) $row['id_account'],
             $row['address'],
             \DateTime::createFromFormat('Y-m-d',$row['create_date']),
             \DateTime::createFromFormat('Y-m-d',$row['receive_date']),

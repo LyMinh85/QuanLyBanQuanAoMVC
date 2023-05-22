@@ -100,6 +100,9 @@ $app->get('administrator/manage-account/account-page','Administrator@AccountPage
 $app->post('administrator/action/add','Administrator@Add');
 $app->post('administrator/action/update','Administrator@Update');
 
+$app->get('administrator/manage-order','Administrator@ManageOrderPage');
+$app->get('administrator/manage-order/order-page','Administrator@OrderPage');
+
 $app->run();
 
 

@@ -13,6 +13,8 @@ use Models\ProductVariantModel;
 use Models\RoleModel;
 use Models\GroupRoles;
 use Models\TypeProductModel;
+use Schemas\Account;
+use Schemas\Group_roles;
 use Models\OrderModel;
 use Schemas\Invoice;
 use Schemas\Product;
@@ -87,7 +89,6 @@ use Schemas\TypeProduct;
         
         public function ManageGrouprolePage():void {
             $groles = $this->groleModel->getGroupRoles(1,10);
-            // print_r($roles);
             View::renderWithoutLayout("manage-in-admin/manage-grouprole",[
                 "groles"=>$groles
             ]);
@@ -163,12 +164,14 @@ use Schemas\TypeProduct;
             ]);
         }
         public function GrouprolePage():void {
-            // print_r($id);
             $id = $this->getQuery('id');
-            print_r($id);
             $groles = $this->groleModel->getById($id);
+            $roles = $this->roleModel->getRoles();
+            $rolesInGroup = $this->groleModel->getRoleInGroup($id);
             View::renderWithoutLayout("manage-in-admin/grouprole-page",[
                 "groles"=>$groles,
+                "roles"=>$roles,
+                "rolesInGroup"=>$rolesInGroup
             ]);
         }
 
@@ -256,7 +259,9 @@ use Schemas\TypeProduct;
                 }
 
                 $invoice = new Invoice();
+                $invoice->account = new Account();
                 $invoice->account->id_account = $idCus;
+                $invoice->product = new Product();
                 $invoice->product->id = $product->id;
                 $invoice->quantity = $sumQuantity;
                 $invoice->sumPrice = $totalPrice;
@@ -274,6 +279,18 @@ use Schemas\TypeProduct;
                     $i++;
                 }
             }  
+
+            if($mode == "Role"){
+                $name = $_POST["name"];
+                $this->roleModel->addRoles($name);
+            }
+
+            if($mode == "GroupRole"){
+                $name = $_POST["name"];
+                $arrRole = $_POST["arr"];
+                $arrRole = explode(",",$arrRole);
+                $this->groleModel->addGroupRoles($name,$arrRole);
+            }
         }
 
         public function Update(){
@@ -323,6 +340,16 @@ use Schemas\TypeProduct;
                     move_uploaded_file($file_image,$dir_saved);
                     $i++;
                 }
+            }
+
+            if($mode == "GroupRole"){
+                $name = $_POST["name"];
+                $id = $_POST["id"];
+                $arr = $_POST["arr"];
+                $arr = explode(",",$arr);
+                
+                $groupRole = new Group_roles($id,$name);
+                $this->groleModel->updateGroupRoles($groupRole,$arr);
             }
         }
     }

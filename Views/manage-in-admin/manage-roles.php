@@ -29,7 +29,7 @@
   $(document).ready(function(){
     $("#Add").click(function(){
       $.ajax({
-        url:"administrator/manage-roles/role-pages?id=-1",
+        url:"<?php echo Config::getUrl("/administrator/manage-roles/role-pages?id=-1") ?>",
         success: function(result){
           $("#content").html(result);
         }

@@ -39,7 +39,7 @@ class RoleModel{
         }
         return null;
     }
-    public function addGroupRoles(string $name_role){
+    public function addRoles(string $name_role){
         $sql = "INSERT INTO role(name) values (?)";
         $result = DB::getDB()->execute_query($sql, [$name_role]);
         if (!$result){

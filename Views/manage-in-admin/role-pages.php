@@ -21,30 +21,49 @@
 
 </div>
 <script>
-function checkError(){
-        if($("#name").val() == "") return " Please enter the name of role!";
+    function checkError(){
+        if($("#name").val() == "") return "name + Please enter the name of role!";
         return null;
     }
 
 $(document).ready(function(){
   $("#Add").click(function(e){
-    e.preventDefault;
-   
-    var check =checkError()
-    // if(check !=null) {
-    //   alert(check);
-    // }
-    var mode = "Role";
-    var name = $("#name").val();
+    e.preventDefault();
     
-    $.ajax({
-            url:"administrator/manage-roles/role-pages/add",
+    
+    try {
+        var check =checkError()
+        if(check != null) throw check;  
+    
+        var mode = "Role";
+        var name = $("#name").val();
+        
+        $.ajax({
+            url:"<?php echo Config::getUrl("/administrator/action/add")?>",
             type: 'post',
+            data:{name:name,
+                  mode:mode},
             success: function(result){
-            $("#"+result.split("+")[1].trim()).focus();
-            alert(result.split("+")[2].trim());
-        }
-    })
+                if (result.split("+")[0].trim() == "false") {
+                    $("#"+result.split("+")[1].trim()).focus();
+                    alert(result.split("+")[2].trim());
+                } else {
+                    $.ajax({
+                        url:"<?php echo Config::getUrl("/administrator/manage-roles")?>",
+                        success: function(result){
+                            $("#content").html(result);
+                        }
+                    })
+                }
+            }
+        })
+    } catch (error) {
+        idError = "#" + error.split("+")[0];
+        messageError = error.split("+")[1]
+        $(idError).focus();
+        alert(messageError);
+    }
+
   })
 
 

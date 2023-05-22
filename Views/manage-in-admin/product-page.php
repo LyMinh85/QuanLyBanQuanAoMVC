@@ -276,8 +276,8 @@
             e.preventDefault();
             try {
                 UpdateData();
-                // var check =checkError();
-                // if(check != null) throw check;
+                var check =checkError();
+                if(check != null) throw check;
                 
                 var mode = "Product";
                 var name = $("#name").val();
@@ -309,7 +309,7 @@
                 }
 
                 $.ajax({
-                    url:"<?php echo Config::getUrl("/administrator/manage-products/product-page/add")?>",
+                    url:"<?php echo Config::getUrl("/administrator/action/add")?>",
                     type: 'post',
                     data:formData,
                     processData:false,
@@ -321,7 +321,6 @@
                             alert(result.split("+")[2].trim());
                         }else{
                             // $("#content").html(result);
-                            // console.log(result);
                         }
                     }
                 })

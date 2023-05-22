@@ -74,11 +74,12 @@ $app->get('logout', 'Account@logout');
 $app->get('administrator','Administrator@AdminPage');
 $app->get('administrator/manage-products','Administrator@ManageProductPage');
 $app->get('administrator/manage-products/product-page','Administrator@ProductPage');
-$app->post('administrator/manage-products/product-page/add','Administrator@Add');
+
 $app->post('administrator/manage-products/product-page/update','Administrator@Update');
 
 $app->get('administrator/manage-roles','Administrator@ManageRolesPage');
 $app->get('administrator/manage-roles/role-pages','Administrator@RolePage');
+$app->post('administrator/manage-roles/role-pages/add','Administrator@Add');
 
 $app->get('administrator/manage-category','Administrator@ManageCategoryPage');
 $app->get('administrator/manage-category/category-page','Administrator@CategoryPage');
@@ -95,6 +96,9 @@ $app->get('administrator/manage-grouprole/grouprole-page','Administrator@Groupro
 
 $app->get('administrator/manage-account','Administrator@ManageAccountPage');
 $app->get('administrator/manage-account/account-page','Administrator@AccountPage');
+
+$app->post('administrator/action/add','Administrator@Add');
+$app->post('administrator/action/update','Administrator@Update');
 
 $app->run();
 

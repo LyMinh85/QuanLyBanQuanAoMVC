@@ -1,7 +1,5 @@
 <?php
-
 namespace Controllers;
-
 
 use Core\BaseController;
 use Core\Response;

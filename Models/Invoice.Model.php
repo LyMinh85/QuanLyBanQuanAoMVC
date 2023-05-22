@@ -4,8 +4,10 @@ namespace Models;
 
 use Core\DB;
 use enums\InvoiceStatus;
+use Schemas\Account;
 use Schemas\Invoice;
 use Schemas\InvoiceDetail;
+use Schemas\Product;
 use Schemas\ProductVariant;
 
 class InvoiceModel
@@ -19,13 +21,36 @@ class InvoiceModel
         return ceil($total/$resultsPerPage);
     }
 
+    public function getById($id): Invoice{
+        $sql = "
+            SELECT *
+            FROM `invoice`
+            WHERE `id_invoice`='$id'
+        ";
+        $result = DB::getDB()->query($sql);
+        
+        $invoice = new Invoice();
+        while ($row = $result->fetch_assoc()) {
+            $invoice->id = $row["id_invoice"];
+            $invoice->createDate = \DateTime::createFromFormat('Y-m-d',$row['create_date']);
+            $invoice->quantity = $row["quantity"];
+            $invoice->sumPrice = (int) $row['sum_price'];
+            $invoice->account = new Account();
+            $invoice->account->id_account = $row["id_account"];
+            $invoice->product = new Product();
+            $invoice->product->id = $row["id_product"];
+        }
+
+        return $invoice;
+    }
+
     public function getInvoices(int $page, int $resultsPerPage): array {
         $pageFirstResult = ($page-1) * $resultsPerPage;
         $sqlGetProducts = "
-            SELECT i.id_invoice, create_date, status, sum_price, id_product_variant, quantity, price 
-            FROM invoice as i
-            LEFT JOIN invoice_detail id on i.id_invoice = id.id_invoice
-            LIMIT $pageFirstResult,$resultsPerPage";
+                SELECT * 
+                FROM `invoice`,`product`,`account`
+                WHERE `invoice`.`id_product` = `product`.`id_product` and `invoice`.`id_account` = `account`.`id_account`
+                GROUP BY `invoice`.`id_invoice`";
         $result = DB::getDB()->execute_query($sqlGetProducts);
         DB::close();
 
@@ -37,23 +62,16 @@ class InvoiceModel
             if (!isset($invoices[$idInvoice])) {
                 $invoice = new Invoice();
                 $invoice->id = $idInvoice;
+                $invoice->account = new Account();
+                $invoice->account->id_account = $row["id_account"];
+                $invoice->product = new Product();
+                $invoice->product->id = $row["id_product"];
                 $invoice->createDate = \DateTime::createFromFormat('Y-m-d',$row['create_date']);
-                $invoice->status = InvoiceStatus::tryFrom($row['status']);
+                $invoice->quantity = $row["quantity"];
                 $invoice->sumPrice = (int) $row['sum_price'];
-                $invoice->invoiceDetails = [];
                 $invoices[$idInvoice] = $invoice;
             } else {
                 $invoice = $invoices[$idInvoice];
-            }
-
-            if (isset($row['id_product_variant'])) {
-                // Create a InvoiceDetail object for this category
-                $invoiceDetail = new InvoiceDetail();
-                $invoiceDetail->productVariant = new ProductVariant();
-                $invoiceDetail->productVariant->id = (int) $row['id_product_variant'];
-                $invoiceDetail->quantity = (int) $row['quantity'];
-                $invoiceDetail->price = (int) $row['price'];
-                $invoice->invoiceDetails[] = $invoiceDetail;
             }
         }
 
@@ -61,26 +79,13 @@ class InvoiceModel
     }
 
     public function addInvoice(Invoice $invoice): int|null {
-        $sql = "Insert into invoice(create_date, status, sum_price)
-                values (?, ?, ?)";
-        $result = DB::getDB()->execute_query(
-            $sql,
-            [
-                $invoice->createDate->format('Y-m-d'),
-                $invoice->status->value,
-                $invoice->sumPrice
-            ]
-        );
-        if (!$result)
-            return null;
+        $date = $invoice->createDate->format("Y-m-d");
+        $id_account = $invoice->account->id_account;
+        $id_product = $invoice->product->id;
+        $sql = "INSERT INTO `invoice`(`id_account`, `id_product`, `create_date`, `quantity`, `sum_price`) 
+               VALUES ('$id_account-','$id_product','$date','$invoice->quantity','$invoice->sumPrice')";
 
-        // If inserted successfully
-        if (DB::getDB()->insert_id) {
-            $insert_id = DB::getDB()->insert_id;
-            DB::close();
-            return $insert_id;
-        }
-        DB::close();
+        DB::getDB()->query($sql);
         return null;
     }
 }

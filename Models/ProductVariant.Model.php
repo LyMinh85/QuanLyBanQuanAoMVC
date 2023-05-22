@@ -149,8 +149,13 @@ class ProductVariantModel
         return false;
     }
 
+    public function deleteByIdProduct($idProduct){
+        $sql = "DELETE FROM product_variant WHERE product_variant.id_product = ?";
+        $result = DB::getDB()->execute_query($sql,[$idProduct]);
+    }
+
     public function deleteById(int $id): bool {
-        $sql = "DELETE FROM product_variant WHERE id_product_variant = ?";
+        $sql = "DELETE FROM product_variant WHERE product_variant.id_product = ?";
         $result = DB::getDB()->execute_query($sql, [$id]);
         if (!$result)
             return false;
@@ -176,6 +181,7 @@ class ProductVariantModel
                 $productVariant->id
             ]
         );
+
         if (!$result)
             return false;
 

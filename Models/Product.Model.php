@@ -229,7 +229,29 @@ class ProductModel {
         if ($row = $result->fetch_assoc()) {
             $product = $this->convertRowToProduct($row);
         }
+
         return $product;
+    }
+
+    public function getTopNewProduct($top){
+        $sql = "
+        SELECT id_product, p.name as productName, price, 
+               description, material, made_by, status, p.id_type_product,
+               tp.name as typeProductName, c.id_category, gender, c.name as categoryName
+        FROM product as p
+        LEFT JOIN type_product tp on tp.id_type_product = p.id_type_product
+        INNER JOIN category c on c.id_category = tp.id_category
+        ORDER BY p.id_product DESC
+        LIMIT ?
+        ";
+        $result = DB::getDB()->execute_query($sql,[$top]);
+
+        $topProducts = [];
+        while ($row = $result->fetch_assoc()) {
+            $topProducts[] = $this->convertRowToProduct($row);
+        }
+
+        return $topProducts;
     }
 
     public function addProduct(Product $product): bool {
@@ -280,7 +302,7 @@ class ProductModel {
                 $product->description,
                 $product->material,
                 $product->madeBy,
-                $product->status,
+                $product->status->value,
                 $product->typeProduct->id,
                 $product->id
             ]

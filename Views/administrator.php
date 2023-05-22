@@ -32,7 +32,7 @@
             e.preventDefault();
 
             $.ajax({
-                url:'administrator/manage-products',
+                url:"<?php echo Config::getUrl('/administrator/manage-products') ?>",
                 success:function(result){
                     $("#content").html(result);
                 }

@@ -5,7 +5,7 @@ namespace Schemas;
 class Order{
 
     public int $id_order;
-    public int $id_customer;
+    public int $id_account;
     public string $address;
     public \DateTime $create_date;
     public \DateTime $receive_date;
@@ -23,10 +23,10 @@ class Order{
      * @param int $sum_price
      * @param int $status
      */
-    public function __construct(int $id_order, int $id_customer, string $address, \DateTime $create_date, \DateTime $receive_date, string $method_of_payment, int $sum_price, int $status)
+    public function __construct(int $id_order, int $id_account, string $address, \DateTime $create_date, \DateTime $receive_date, string $method_of_payment, int $sum_price, int $status)
     {
         $this->id_order = $id_order;
-        $this->id_customer = $id_customer;
+        $this->id_account = $id_account;
         $this->address = $address;
         $this->create_date = $create_date;
         $this->receive_date = $receive_date;

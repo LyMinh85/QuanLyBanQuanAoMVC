@@ -214,12 +214,14 @@ class ProductModel {
 
     public function getById(int $id): Product|null {
         $sql = "
-            SELECT id_product, p.name as productName, price, 
-                   description, material, made_by, status, p.id_type_product,
-                   tp.name as typeProductName, id_category, gender
-            FROM product as p
-            LEFT JOIN type_product tp on tp.id_type_product = p.id_type_product
-            WHERE id_product = ?
+        SELECT product.id_product,product.name as productName, product.price, product.description,
+               product.material,product.material,product.made_by,product.status, type_product.id_type_product,
+               type_product.name as typeProductName, type_product.gender,category.id_category,
+               category.name as categoryName
+        FROM product,type_product,category
+        WHERE product.id_type_product = type_product.id_type_product 
+              and category.id_category = type_product.id_category
+              and product.id_product = ?
         ";
         $result = DB::getDB()->execute_query($sql, [$id]);
         DB::close();

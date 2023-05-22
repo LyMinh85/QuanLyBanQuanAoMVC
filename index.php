@@ -72,7 +72,9 @@ $app->get('logout', 'Account@logout');
 
 // administrator
 $app->get('administrator','Administrator@AdminPage');
-$app->get('adminsitrator/manage-product','Administrator@ManageProductPage');
+$app->get('administrator/manage-products','Administrator@ManageProductPage');
+$app->get('administrator/manage-products/product-page','Administrator@ProductPage');
+$app->post('administrator/manage-products/product-page/add','Administrator@Add');
 
 $app->run();
 

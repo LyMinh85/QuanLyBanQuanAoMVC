@@ -9,11 +9,13 @@ use Schemas\Category;
 use Schemas\TypeProduct;
 
 class CategoryModel {
-//    public function convertRowToCategory($row): Category {
-//        $category = new Category();
-//        $category->id = (int) $row['id'];
-//        $category->name = $row['name']
-//    }
+   public function convertRowToCategory($row): Category {
+       $category = new Category();
+       $category->id = (int) $row['id_category'];
+       $category->name = $row['name'];
+
+       return $category;
+   }
 
     public function getNumberOfPage(int $resultsPerPage): int {
         $sqlCount = "SELECT count(1) FROM category";
@@ -22,6 +24,19 @@ class CategoryModel {
         $total = $row[0];
         $numberOfPage = ceil($total/$resultsPerPage);
         return $numberOfPage;
+    }
+
+    public function getCategoriesOnly(){
+        $sql = "
+            SELECT * FROM category
+        ";
+        $result = DB::getDB()->execute_query($sql);
+        $categories = [];
+        while ($row = $result->fetch_assoc()) {
+            $categories[] = $this->convertRowToCategory($row);
+        }
+
+        return $categories;
     }
 
     public function getCategories(int $page, int $resultsPerPage): array {

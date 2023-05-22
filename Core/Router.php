@@ -129,7 +129,6 @@ class Router
         foreach ($this->routes as $route) {
             if (preg_match($route->getPattern(), $url, $matches)) {
                 $log[] = "Method of route: " . $route->getMethod() . "Method of request: " . $this->request->getMethod();
-
                 if ($route->getMethod() === $this->request->getMethod()) {
                     $params = [];
                     // Get named capture group values
@@ -281,7 +280,6 @@ class Router
         } else if ($url == '') {
             $url = '/';
         }
-
         return $url;
     }
 

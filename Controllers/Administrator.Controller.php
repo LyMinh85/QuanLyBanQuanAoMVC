@@ -11,6 +11,7 @@ use Models\CategoryModel;
 use Models\ProductModel;
 use Models\ProductVariantModel;
 use Models\RoleModel;
+use Models\GroupRoles;
 use Models\TypeProductModel;
 use Schemas\Product;
 use Schemas\ProductVariant;
@@ -23,6 +24,8 @@ use Schemas\TypeProduct;
         private CategoryModel $categoryModel;
         private TypeProductModel $typeProductModel;
         private RoleModel $roleModel;
+        private GroupRoles $groleModel;
+        private AccountModel $accountModel;
         public function register(): void
         {
             new AuthMiddleware();
@@ -31,6 +34,8 @@ use Schemas\TypeProduct;
             $this->categoryModel = new CategoryModel();
             $this->typeProductModel = new TypeProductModel();
             $this->roleModel = new RoleModel();
+            $this->groleModel = new GroupRoles();
+            $this->accountModel = new AccountModel();
         }
 
         public function AdminPage(): void
@@ -66,7 +71,6 @@ use Schemas\TypeProduct;
                 "categories"=>$categories
             ]);
         }
-
         public function ManageTypePage():void{
             $types = $this->typeProductModel->getTypeProducts();
 
@@ -74,6 +78,24 @@ use Schemas\TypeProduct;
                 "types"=>$types
             ]);
         }
+        
+        public function ManageGrouprolePage():void {
+            $groles = $this->groleModel->getGroupRoles(1,10);
+            // print_r($roles);
+            View::renderWithoutLayout("manage-in-admin/manage-grouprole",[
+                "groles"=>$groles
+            ]);
+        }
+        public function ManageAccountPage():void {
+            $accounts = $this->accountModel->getAccounts(1,10);
+          
+            View::renderWithoutLayout("manage-in-admin/manage-account",[
+                "accounts"=>$accounts
+            ]);
+        }
+
+
+
 
         public function RolePage():void {
             // print_r($id);
@@ -103,6 +125,25 @@ use Schemas\TypeProduct;
             View::renderWithoutLayout("manage-in-admin/type-page",[
                 "type"=>$type,
                 "categories"=>$categories
+            ]);
+        }
+        public function GrouprolePage():void {
+            // print_r($id);
+            $id = $this->getQuery('id');
+            print_r($id);
+            $groles = $this->groleModel->getById($id);
+            View::renderWithoutLayout("manage-in-admin/grouprole-page",[
+                "groles"=>$groles,
+            ]);
+        }
+
+        public function AccountPage():void {
+            // print_r($id);
+            $id = $this->getQuery('id');
+            print_r($id);
+            $accounts = $this->accountModel->getById($id);
+            View::renderWithoutLayout("manage-in-admin/account-page",[
+                "accounts"=>$accounts,
             ]);
         }
         public function ProductPage():void {

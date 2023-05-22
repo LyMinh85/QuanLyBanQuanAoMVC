@@ -72,7 +72,28 @@
                 }
             })
         })
+        $("#btnManageGroupRole").click(function(e){
+            e.preventDefault();
 
+            $.ajax({
+                url:"<?php echo Config::getUrl("/administrator/manage-grouprole")?>",
+                success:function(result){
+                    console.log(result);    
+                    $("#content").html(result);
+                }
+            })
+        })
+        $("#btnManageAccount").click(function(e){
+            e.preventDefault();
+
+            $.ajax({
+                url:"<?php echo Config::getUrl("/administrator/manage-account")?>",
+                success:function(result){
+                    console.log(result);    
+                    $("#content").html(result);
+                }
+            })
+        })
     })
 
 </script>

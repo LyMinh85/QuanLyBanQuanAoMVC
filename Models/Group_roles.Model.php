@@ -8,7 +8,7 @@ class GroupRoles{
     private function convertRowToGroupRoles($row): Group_roles{
         return new Group_roles(
             (int) ['id_group_roles'],
-            $row['name_group_role']
+            $row['name']
         );
     }
     public function getGroupRoles(int $page, int $resultPerPage):array{
@@ -17,7 +17,7 @@ class GroupRoles{
         $result = DB::getDB()->execute_query($sql);
         $group_roles = [];
         while ($row = $result->fetch_assoc()){
-            $group_roles = $this->convertRowToGroupRoles($row);
+            $group_roles[] = $this->convertRowToGroupRoles($row);
         }
 
         return $group_roles;

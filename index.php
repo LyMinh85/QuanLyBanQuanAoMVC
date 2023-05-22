@@ -86,8 +86,15 @@ $app->get('administrator/manage-category/category-page','Administrator@CategoryP
 $app->get('administrator/manage-type','Administrator@ManageTypePage');
 $app->get('administrator/manage-type/type-page','Administrator@TypePage');
 
+
 $app->get('administrator/manage-invoice','Administrator@ManageInvoicePage');
 $app->get('administrator/manage-invoice/invoice-page','Administrator@InvoicePage');
+
+$app->get('administrator/manage-grouprole','Administrator@ManageGrouprolePage');
+$app->get('administrator/manage-grouprole/grouprole-page','Administrator@GrouprolePage');
+
+$app->get('administrator/manage-account','Administrator@ManageAccountPage');
+$app->get('administrator/manage-account/account-page','Administrator@AccountPage');
 
 $app->run();
 

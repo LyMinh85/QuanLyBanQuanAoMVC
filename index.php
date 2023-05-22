@@ -77,6 +77,15 @@ $app->get('administrator/manage-products/product-page','Administrator@ProductPag
 $app->post('administrator/manage-products/product-page/add','Administrator@Add');
 $app->post('administrator/manage-products/product-page/update','Administrator@Update');
 
+$app->get('administrator/manage-roles','Administrator@ManageRolesPage');
+$app->get('administrator/manage-roles/role-pages','Administrator@RolePage');
+
+$app->get('administrator/manage-category','Administrator@ManageCategoryPage');
+$app->get('administrator/manage-category/category-page','Administrator@CategoryPage');
+
+$app->get('administrator/manage-type','Administrator@ManageTypePage');
+$app->get('administrator/manage-type/type-page','Administrator@TypePage');
+
 $app->run();
 
 

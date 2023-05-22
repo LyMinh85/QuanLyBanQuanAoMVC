@@ -2,8 +2,6 @@
     <h5>Manage Production</h5>
 </div>
 
-
-
 <table class="table table-hover" id="displayTable">
     <thead>
         <tr>
@@ -61,7 +59,7 @@
     $("#displayTable").on('click',".buttonDelete",function(){
       var currentRow = $(this).closest("tr");
       var id=currentRow.find("td:eq(0)").text(); 
-
+      // alert(id);
     })
 
     $("#displayTable").on('click',".buttonEdit",function(){

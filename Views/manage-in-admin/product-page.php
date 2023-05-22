@@ -256,6 +256,11 @@
 
         arr = [];
         arr =arrUpdate;
+
+        if($("#price").val() == "") throw "price + Please enter the price of product";
+        if($("#material").val() == "") throw "material + Please enter the material of product!";
+        if($("#made_by").val() == "") throw "made_by + Please fill up made by!";
+        
         return null;
     }
 

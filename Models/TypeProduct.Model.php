@@ -12,9 +12,10 @@ class TypeProductModel {
     public function convertRowToTypeProduct($row): TypeProduct {
         $typeProduct = new TypeProduct();
         $typeProduct->id = (int) $row['id_type_product'];
-        $typeProduct->name = $row['name'];
+        $typeProduct->name = $row['nameType'];
         $typeProduct->category = new Category();
-        $typeProduct->category->id = (int) $row['id_category'];
+        // $typeProduct->category->id = (int) $row['id_category'];
+        $typeProduct->category->name = $row['nameCate'];
         $typeProduct->gender = Gender::from($row['gender']);
         return $typeProduct;
     }
@@ -22,17 +23,19 @@ class TypeProductModel {
     public function getTypeProducts(): array
     {
         $typeProducts = [];
-        $sql = "Select * from $this->DATABASE_NAME";
+        $sql = "SELECT `type_product`.`id_type_product`,type_product.name as nameType, type_product.gender ,category.name as nameCate
+        FROM `type_product`,category 
+        WHERE type_product.id_category = category.id_category;";
         $result = DB::getDB()->execute_query($sql);
-        DB::close();
         while ($row = $result->fetch_assoc()) {
             $typeProducts[] = $this->convertRowToTypeProduct($row);
         }
+        DB::close();
         return $typeProducts;
     }
 
     public function getById(int $id): TypeProduct|null {
-        $sql = "SELECT * FROM $this->DATABASE_NAME where id_type_product = ?";
+        $sql = "SELECT `type_product`.`id_type_product`,type_product.name as nameType, type_product.gender ,category.name as nameCate FROM type_product,category   where id_type_product = ?";
         $result = DB::getDB()->execute_query($sql, [$id]);
         DB::close();
         if ($row = $result->fetch_assoc()) {
@@ -70,7 +73,7 @@ class TypeProductModel {
 
     public function updateById(TypeProduct $typeProduct): bool {
         $sql = "UPDATE $this->DATABASE_NAME SET name = ?, id_category = ?, gender = ? WHERE id_type_product = ?";
-        $result = DB::getDB()->execute_query($sql, [$typeProduct->name, $typeProduct->idCategory, $typeProduct->gender, $typeProduct->id]);
+        $result = DB::getDB()->execute_query($sql, [$typeProduct->name, $typeProduct->category->getId(), $typeProduct->gender, $typeProduct->id]);
         if (!$result)
             return false;
 

@@ -1,6 +1,5 @@
 <?php
 namespace Controllers;
-
 use Core\BaseController;
 use Core\View;
 use enums\ClothingSize;
@@ -8,12 +7,14 @@ use enums\ProductStatus;
 use Middlewares\AuthMiddleware;
 use Models\AccountModel;
 use Models\CategoryModel;
+use Models\InvoiceModel;
 use Models\ProductModel;
 use Models\ProductVariantModel;
 use Models\RoleModel;
 use Models\GroupRoles;
 use Models\TypeProductModel;
 use Models\OrderModel;
+use Schemas\Invoice;
 use Schemas\Product;
 use Schemas\ProductVariant;
 use Schemas\Role;
@@ -25,9 +26,10 @@ use Schemas\TypeProduct;
         private CategoryModel $categoryModel;
         private TypeProductModel $typeProductModel;
         private RoleModel $roleModel;
-        private GroupRoles $groleModel;
         private AccountModel $accountModel;
         private OrderModel $orderModel;
+        private InvoiceModel $invoiceModel;
+        private GroupRoles $groleModel;
         public function register(): void
         {
             new AuthMiddleware();
@@ -36,9 +38,10 @@ use Schemas\TypeProduct;
             $this->categoryModel = new CategoryModel();
             $this->typeProductModel = new TypeProductModel();
             $this->roleModel = new RoleModel();
-            $this->groleModel = new GroupRoles();
             $this->accountModel = new AccountModel();
             $this->orderModel = new OrderModel();
+            $this->invoiceModel = new InvoiceModel();
+            $this->groleModel = new GroupRoles();
         }
 
         public function AdminPage(): void
@@ -108,10 +111,31 @@ use Schemas\TypeProduct;
 
 
 
+        public function ManageInvoicePage():void{
+            $invoices = $this->invoiceModel->getInvoices(1,10);
+            View::renderWithoutLayout("manage-in-admin/manage-invoice",[
+                "invoices"=>$invoices
+            ]);
+        }
+
+        public function InvoicePage():void {
+            $idInvoice = $this->getQuery('id');
+            $invoice = $this->invoiceModel->getById($idInvoice);
+            $account = $this->accountModel->getById($invoice->account->id_account);
+            $product = $this->productModel->getById($invoice->product->id);
+            $productVariant = $this->productVariantModel->getAllProductionVariantByIdProduct($product->getId());
+
+            View::renderWithoutLayout("manage-in-admin/invoice-page",[
+                "invoice"=>$invoice,
+                "account"=>$account,
+                "product"=>$product,
+                "productVariant"=>$productVariant
+            ]);
+        }
+
         public function RolePage():void {
             // print_r($id);
             $id = $this->getQuery('id');
-            print_r($id);
             $role = $this->roleModel->getById($id);
             View::renderWithoutLayout("manage-in-admin/role-pages",[
                 "roles"=>$role,
@@ -205,7 +229,6 @@ use Schemas\TypeProduct;
 
                 $this->productModel->addProduct($product);
                 $product = $this->productModel->getTopNewProduct(1)[0];
-                print_r($product);
 
                 $productVariants = [];
                 $productVariantsSended = json_decode($_POST["productVariants"]);
@@ -223,6 +246,25 @@ use Schemas\TypeProduct;
                 foreach ($productVariants as  $value) {
                     $this->productVariantModel->addProductVariant($value);  
                 }
+
+                $idCus = $_POST["idCus"];
+                $sumQuantity = 0;
+                $totalPrice = 0;
+                foreach ($productVariantsSended as $value) {
+                    $sumQuantity += (int)$value->quantity;
+                    $totalPrice += (int)$value->quantity * $product->price;
+                }
+
+                $invoice = new Invoice();
+                $invoice->account->id_account = $idCus;
+                $invoice->product->id = $product->id;
+                $invoice->quantity = $sumQuantity;
+                $invoice->sumPrice = $totalPrice;
+                date_default_timezone_set("Asia/Bangkok");
+                date_create(date("d-m-Y"));
+                $invoice->createDate = date_create(date("d-m-Y"));
+
+                $this->invoiceModel->addInvoice($invoice);
 
                 $i = 0;
                 while (isset($_FILES["file".$i])) {

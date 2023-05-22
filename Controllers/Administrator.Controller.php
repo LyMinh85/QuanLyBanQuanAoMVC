@@ -13,6 +13,7 @@ use Models\ProductVariantModel;
 use Models\RoleModel;
 use Models\GroupRoles;
 use Models\TypeProductModel;
+use Models\OrderModel;
 use Schemas\Invoice;
 use Schemas\Product;
 use Schemas\ProductVariant;
@@ -26,6 +27,7 @@ use Schemas\TypeProduct;
         private TypeProductModel $typeProductModel;
         private RoleModel $roleModel;
         private AccountModel $accountModel;
+        private OrderModel $orderModel;
         private InvoiceModel $invoiceModel;
         private GroupRoles $groleModel;
         public function register(): void
@@ -37,6 +39,7 @@ use Schemas\TypeProduct;
             $this->typeProductModel = new TypeProductModel();
             $this->roleModel = new RoleModel();
             $this->accountModel = new AccountModel();
+            $this->orderModel = new OrderModel();
             $this->invoiceModel = new InvoiceModel();
             $this->groleModel = new GroupRoles();
         }
@@ -96,6 +99,14 @@ use Schemas\TypeProduct;
                 "accounts"=>$accounts
             ]);
         }
+        public function ManageOrderPage():void {
+            $orders = $this->orderModel->getOrders(1,10);
+          
+            View::renderWithoutLayout("manage-in-admin/manage-order",[
+                "orders"=>$orders
+            ]);
+        }
+
 
 
 
@@ -168,6 +179,15 @@ use Schemas\TypeProduct;
             $accounts = $this->accountModel->getById($id);
             View::renderWithoutLayout("manage-in-admin/account-page",[
                 "accounts"=>$accounts,
+            ]);
+        }
+        public function OrderPage():void {
+            // print_r($id);
+            $id = $this->getQuery('id');
+            print_r($id);
+            $orders = $this->orderModel->getById($id);
+            View::renderWithoutLayout("manage-in-admin/order-page",[
+                "orders"=>$orders,
             ]);
         }
         public function ProductPage():void {

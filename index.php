@@ -96,6 +96,9 @@ $app->get('administrator/manage-grouprole/grouprole-page','Administrator@Groupro
 $app->get('administrator/manage-account','Administrator@ManageAccountPage');
 $app->get('administrator/manage-account/account-page','Administrator@AccountPage');
 
+$app->get('administrator/manage-order','Administrator@ManageOrderPage');
+$app->get('administrator/manage-order/order-page','Administrator@OrderPage');
+
 $app->run();
 
 

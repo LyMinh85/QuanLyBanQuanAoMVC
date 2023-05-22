@@ -7,8 +7,9 @@ use enums\InvoiceStatus;
 class Invoice
 {
     public int $id;
+    public Account $account;
+    public Product $product;
     public \DateTime $createDate;
-    public InvoiceStatus $status;
+    public int $quantity;
     public int $sumPrice;
-    public array $invoiceDetails;
 }

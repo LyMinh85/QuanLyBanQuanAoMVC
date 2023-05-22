@@ -72,7 +72,17 @@
                 }
             })
         })
+        $("#btnManageInvoice").click(function(e){
+            e.preventDefault();
 
+            $.ajax({
+                url:"<?php echo Config::getUrl("/administrator/manage-invoice")?>",
+                success:function(result){
+                    console.log(result);    
+                    $("#content").html(result);
+                }
+            })
+        })
     })
 
 </script>

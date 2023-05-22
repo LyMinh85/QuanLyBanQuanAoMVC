@@ -1,3 +1,9 @@
+<?php if($products == null){
+    session_start();
+    $idCus = $_SESSION["user"]["id"];
+}
+?>
+
 <div class="mb-3">
   <label for="" class="form-label">Name</label>
   <input type="text"
@@ -269,11 +275,10 @@
         $("#Add").click(function(e){
             e.preventDefault();
             try {
-
                 UpdateData();
                 // var check =checkError();
                 // if(check != null) throw check;
-
+                
                 var mode = "Product";
                 var name = $("#name").val();
                 var material = $("#material").val();
@@ -284,9 +289,11 @@
                 var type = $("#type").val().split("-")[0];
                 var status = $("#status").val().split("-")[0];
                 var description = $("#description").val();
+                var idCus = "<?php if($products == null) echo $idCus?>";
 
                 var formData = new FormData();
                 formData.append("mode",mode);
+                formData.append("idCus",idCus);
                 formData.append("name",name);
                 formData.append("material",material);
                 formData.append("made_by",made_by);
@@ -308,12 +315,13 @@
                     processData:false,
                     contentType:false,
                     success: function(result){
+                        console.log(result);
                         if(result.split("+")[0].trim() == "false"){
                             $("#"+result.split("+")[1].trim()).focus();
                             alert(result.split("+")[2].trim());
                         }else{
                             // $("#content").html(result);
-                            console.log(result);
+                            // console.log(result);
                         }
                     }
                 })
@@ -345,7 +353,6 @@
             var type = $("#type").val().split("-")[0];
             var status = $("#status").val().split("-")[0];
             var description = $("#description").val();
-            var id = "<?php if($products != null) echo $products->id ?>";
 
             var formData = new FormData();
             formData.append("mode",mode);

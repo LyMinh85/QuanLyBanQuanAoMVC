@@ -3,6 +3,7 @@
 namespace Controllers;
 
 
+use Cassandra\Date;
 use Core\BaseController;
 use Core\Response;
 use Core\Validate;
@@ -112,15 +113,17 @@ class AccountController extends BaseController{
 
     // POST: /sign-up
     public function signUp(): void {
-        $bodyData = Validate::getBodyData(['username','password','name','gender','birthday','phone','address','email']);
+        $bodyData = Validate::getBodyData(['username','password', 're-password','name','gender','birthday','phone','address','email']);
         if (isset($bodyData['error'])) {
             View::render('sign-up', [
                 'missingFields' => $bodyData['missingFields']
             ]);
         }
 
+
         $username = $bodyData['username'];
         $password = $bodyData['password'];
+        $re_password = $bodyData['re-password'];
         $name = $bodyData['name'];
         $gender = $bodyData['gender'];
         $input_birthday = $bodyData['birthday'];
@@ -129,8 +132,42 @@ class AccountController extends BaseController{
         $address = $bodyData['address'];
         $email = $bodyData['email'];
 
+        $isError = false;
+        $listError = [];
+        $listError['username'] = $username;
+        $listError['password'] = $password;
+        $listError['re_password'] = $re_password;
+        $listError['name'] = $name;
+        $listError['gender'] = $gender;
+        $listError['input_birthday'] = $input_birthday;
+        $listError['phone'] = $phone;
+        $listError['address'] = $address;
+        $listError['email'] = $email;
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+            $listError['incorrectEmail'] = "Email không đúng định dạng!!!";
+            $isError = true;
+        }
+        if(!preg_match("/^0\d{8,12}$/", $phone)) {
+            $listError['incorrectPhone'] = "SĐT của bạn phải bắt đầu bằng 0, có khoảng 9-11 số và không được nhập chữ  !!!";
+            $isError = true;
+        }
+        if($re_password != $password){
+            $listError['incorrectPass'] = "Cần nhập lại chính xác mật khẩu!!!";
+            $isError = true;
+        }
+
+        if(time() - strtotime($input_birthday) < 5 *31536000){
+            $listError['incorrectAge'] = "Ngày tháng năm sinh của bạn chưa hợp lệ !!!";
+            $isError = true;
+        }
+
+        if($isError){
+            View::render('sign-up',$listError);
+        }
+
         if ($this->accountModel->addAccount($username, $password,$name, $gender,$birthday, $phone, $address,$email)){
-            Response::sendJson("Created successfully");
+            Response::redirect('/login');
         } else{
             View::render('sign-up');
         }

@@ -1,6 +1,7 @@
 <?php
 namespace Controllers;
 use Core\BaseController;
+// use Core\Response;
 use Core\View;
 use enums\ClothingSize;
 use enums\ProductStatus;
@@ -48,12 +49,21 @@ use Schemas\TypeProduct;
 
         public function AdminPage(): void
         {
+            session_start();
+            print_r($_SESSION["user"]["id_group_role"]);
             $action = $this->getQuery('action');
             if ($action == null) {
                 $action = "home";
             }
-
-            View::render("administrator");
+            $rolesInGroup = $this->groleModel->getRoleInGroup($_SESSION["user"]["id_group_role"]);
+            print_r($rolesInGroup);
+            $roles = [];
+            foreach ($rolesInGroup as $value) {
+                $roles[] = $this->roleModel->getById($value);
+            }
+            View::render("administrator",[
+                "roles"=>$roles
+            ]);
         }
 
         public function ManageProductPage():void {
@@ -145,9 +155,9 @@ use Schemas\TypeProduct;
         public function CategoryPage():void {
             // print_r($id);
             $id = $this->getQuery('id');
-            print_r($id);
+            // print_r($id);
             $categories = $this->categoryModel->getById($id);
-            print_r($categories);
+            // print_r($categories);
             View::renderWithoutLayout("manage-in-admin/category-page",[
                 "categories"=>$categories
             ]);
@@ -155,7 +165,7 @@ use Schemas\TypeProduct;
         public function TypePage():void {
             // print_r($id);
             $id = $this->getQuery('id');
-            print_r($id);
+            // print_r($id);
             $type = $this->typeProductModel->getById($id);
             $categories = $this->categoryModel->getCategories(1,10);
             View::renderWithoutLayout("manage-in-admin/type-page",[
@@ -178,10 +188,12 @@ use Schemas\TypeProduct;
         public function AccountPage():void {
             // print_r($id);
             $id = $this->getQuery('id');
-            print_r($id);
             $accounts = $this->accountModel->getById($id);
+            $groupRoles = $this->groleModel->getGroupRoles(1,10);
+
             View::renderWithoutLayout("manage-in-admin/account-page",[
                 "accounts"=>$accounts,
+                "groupRoles"=>$groupRoles
             ]);
         }
         public function OrderPage():void {
@@ -196,7 +208,7 @@ use Schemas\TypeProduct;
         public function ProductPage():void {
             // print_r($id);
             $id = $this->getQuery('id');
-            print_r($id);
+            // print_r($id);
 
             $products = $this->productModel->getById($id);
             $productVariants = $this->productVariantModel->getAllProductionVariantByIdProduct($id);            
@@ -235,6 +247,7 @@ use Schemas\TypeProduct;
 
                 $productVariants = [];
                 $productVariantsSended = json_decode($_POST["productVariants"]);
+                print_r($productVariantsSended);
                 foreach ($productVariantsSended as $value) {
                     $productVariant = new ProductVariant();
                     $productVariant->product = $product;
@@ -245,6 +258,7 @@ use Schemas\TypeProduct;
                     $productVariant->urlImage = $value->urlImage;
                     $productVariants[] = $productVariant;
                 }
+                print_r($productVariants);
 
                 foreach ($productVariants as  $value) {
                     $this->productVariantModel->addProductVariant($value);  
@@ -289,7 +303,29 @@ use Schemas\TypeProduct;
                 $name = $_POST["name"];
                 $arrRole = $_POST["arr"];
                 $arrRole = explode(",",$arrRole);
+                // print_r($arrRole);
                 $this->groleModel->addGroupRoles($name,$arrRole);
+            }
+
+            if($mode == "Account"){
+                $username = $_POST['username'];
+                $password = $_POST['password'];
+                $name = $_POST['name'];
+                $gender = $_POST['gender'];
+                $input_birthday = $_POST['birthday'];
+                $birthday = \DateTime::createFromFormat('Y-m-d',$input_birthday);
+                $phone = $_POST['phone'];
+                $address = $_POST['address'];
+                $email = $_POST['email'];
+                $groupRole = $_POST['groupRole'];
+                $idGroup = explode("-",$groupRole)[0];
+
+                if ($this->accountModel->addAccountFromAdmin($username, $password,$name, $gender,$birthday, $phone, $address,$email,$idGroup)){
+                    header("Location: http://localhost/ban-quan-ao/administrator/");
+                    die();
+                } else{
+                    View::render('sign-up');
+                }
             }
         }
 
@@ -312,6 +348,7 @@ use Schemas\TypeProduct;
                 $product->status = ProductStatus::from($_POST['status']);
                 $product->typeProduct = new TypeProduct();
                 $product->typeProduct->id = $_POST["type"];
+                print_r($product);
 
                 $this->productModel->updateById($product);
 
@@ -350,6 +387,39 @@ use Schemas\TypeProduct;
                 
                 $groupRole = new Group_roles($id,$name);
                 $this->groleModel->updateGroupRoles($groupRole,$arr);
+            }
+
+            if($mode == "Account"){
+                $username = $_POST['username'];
+                $password = $_POST['password'];
+                $name = $_POST['name'];
+                $gender = $_POST['gender'];
+                $phone = $_POST['phone'];
+                $address = $_POST['address'];
+                $email = $_POST['email'];
+                $groupRole = $_POST['groupRole'];
+                $idGroup = explode("-",$groupRole)[0];
+                $idAccount = $_POST["id"];
+
+                $account = new Account();
+                $account->id_account = $idAccount;
+                $account->username = $username;
+                $account->password = $password;
+                $account->name = $name;
+                $account->gender = $gender;
+                $account->phone = $phone;
+                $account->address = $address;
+                $account->email = $email;
+                $account->id_group_roles = (int)$idGroup;
+                print_r($account);
+
+
+                if ($this->accountModel->updateAccountFromAdmin($account)){
+                    header("Location: http://localhost/ban-quan-ao/administrator/");
+                    die();
+                } else{
+                    View::render('sign-up');
+                }
             }
         }
     }

@@ -9,5 +9,5 @@ enum ClothingSize: string
     case M = "M";
     case L = "L";
     case XL = "XL";
-    case XLL = "XLL";
+    case XXL = "XXL";
 }

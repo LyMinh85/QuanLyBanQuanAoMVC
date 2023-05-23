@@ -262,10 +262,6 @@
 
         arr = [];
         arr =arrUpdate;
-
-        if($("#price").val() == "") throw "price + Please enter the price of product";
-        if($("#material").val() == "") throw "material + Please enter the material of product!";
-        if($("#made_by").val() == "") throw "made_by + Please fill up made by!";
         
         return null;
     }
@@ -320,7 +316,13 @@
                             $("#"+result.split("+")[1].trim()).focus();
                             alert(result.split("+")[2].trim());
                         }else{
-                            // $("#content").html(result);
+                            alert("Success");
+                            $.ajax({
+                                url:"<?php echo Config::getUrl("/administrator/manage-products")?>",
+                                success: function(result){
+                                    $("#content").html(result);
+                                }
+                            })
                         }
                     }
                 })
@@ -347,11 +349,11 @@
             var material = $("#material").val();
             var made_by = $("#made_by").val();
             var price = $("#price").val();
-            // var gender = $("#gender").val();
             var category = $("#category").val().split("-")[0];
             var type = $("#type").val().split("-")[0];
             var status = $("#status").val().split("-")[0];
             var description = $("#description").val();
+            var id = "<?php if($products!=null)  echo $products->id?>"
 
             var formData = new FormData();
             formData.append("mode",mode);
@@ -360,7 +362,6 @@
             formData.append("material",material);
             formData.append("made_by",made_by);
             formData.append("price",price);
-            // formData.append("gender",gender);
             formData.append("category",category);
             formData.append("type",type);
             formData.append("status",status);
@@ -382,7 +383,7 @@
                             $("#"+result.split("+")[1].trim()).focus();
                             alert(result.split("+")[2].trim());
                     }else{
-                        console.log(result);
+                        alert("Update success");
                     }
                 }
             })

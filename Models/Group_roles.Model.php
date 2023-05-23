@@ -43,12 +43,12 @@ class GroupRoles{
         $sql = "
             SELECT * 
             FROM `roles_in_group` 
-            WHERE `roles_in_group`.`id_role`= $id
+            WHERE `roles_in_group`.`id_group_role`= $id
         ";
         $result = DB::getDB()->query($sql);
         $roles = [];
         while ($row = $result->fetch_assoc()) {
-            $roles[] = $row["id_group_role"];
+            $roles[] = $row["id_role"];
         }
 
         return $roles;

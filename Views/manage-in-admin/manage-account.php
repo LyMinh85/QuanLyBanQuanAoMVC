@@ -47,7 +47,7 @@
   $(document).ready(function(){
     $("#Add").click(function(){
       $.ajax({
-        url:"administrator/manage-account/account-page?id=-1",
+        url:"<?php echo Config::getUrl("/administrator/manage-account/account-page?id=-1") ?>",
         success: function(result){
           $("#content").html(result);
         }
@@ -56,8 +56,10 @@
     $("#displayTable").on('click',".buttonEdit",function(){
       var currentRow = $(this).closest("tr");
       var id=currentRow.find("td:eq(0)").text(); 
+      url = "<?php echo Config::getUrl("/administrator/manage-account/account-page?id=")?>";
+      url += id;
       $.ajax({
-        url:"administrator/manage-account/account-page?id="+id,
+        url:url,
         success:function(result){
           $("#content").html(result);
         }

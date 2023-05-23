@@ -1,21 +1,41 @@
 <div class="container-fluid" style="margin:0px">
-    
-    <div class="row">
+
+    <button class="btn btn-outline-primary"><a href="<?php echo Config::getUrl("") ?>" style="text-decoration-line: none;">Home</a></button>
+
+    <div class="row" style="text-align:center;">
+        <h1>ADMIN PAGE</h1>
+    </div>
+
+    <div class="row" style="margin-top:10px;">
 
         <form action="" method="get" class="col-md-2 list-group">
 
-            <button type="button" class="btn btn-outline-primary" id="btnManageRole">ManageRole</button>
-            <button type="button" class="btn btn-outline-primary" id="btnManageGroupRole">ManageGroupRole</button>
-            <button type="button" class="btn btn-outline-primary" id="btnManageAccount">ManageAccount</button>
-            <button type="button" class="btn btn-outline-primary" id="btnManageCategory">ManageCategory</button>
-            <button type="button" class="btn btn-outline-primary" id="btnManageType">ManageType</button>
-            <button type="submit" class="btn btn-outline-primary" id="btnManageProduct">ManageProduction</button>
-            <button type="button" class="btn btn-outline-primary" id="btnManageInvoice">ManageInvoice</button>
-            <button type="button" class="btn btn-outline-primary" id="btnManageOrder">ManageOrder</button>
+            <?php if($_SESSION["user"]["id_group_role"] == 100): ?>
+                <button type="button" class="btn btn-outline-primary" id="btnManageRole">ManageRole</button>
+                <button type="button" class="btn btn-outline-primary" id="btnManageGroupRole">ManageGroupRole</button>
+                <button type="button" class="btn btn-outline-primary" id="btnManageAccount">ManageAccount</button>
+                <button type="button" class="btn btn-outline-primary" id="btnManageCategory">ManageCategory</button>
+                <button type="button" class="btn btn-outline-primary" id="btnManageType">ManageType</button>
+            <?php endif; ?>
+
+            <?php foreach ($roles as $value):?> 
+                <?php if($value->name_role == "ManageProduction"): ?>
+                    <button type="submit" class="btn btn-outline-primary" id="btnManageProduct">ManageProduction</button>
+                <?php endif; ?>
+                
+                <?php if($value->name_role == "ManageInvoice"): ?>
+                    <button type="button" class="btn btn-outline-primary" id="btnManageInvoice">ManageInvoice</button>
+                <?php endif; ?>
+
+                <?php if($value->name_role == "ManageOrder"): ?>
+                    <button type="button" class="btn btn-outline-primary" id="btnManageOrder">ManageOrder</button>
+                <?php endif; ?>
+
+            <?php endforeach; ?>
 
         </form>
 
-        <div class="col" id="content">123</div>
+        <div class="col" id="content"></div>
 
     </div>
 

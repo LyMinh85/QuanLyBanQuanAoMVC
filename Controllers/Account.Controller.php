@@ -177,6 +177,7 @@ class AccountController extends BaseController{
         $user = [
             'id' => $account->id_account,
             'username' => $account->username,
+            'id_group_role'=>$account->id_group_roles
         ];
 
         $_SESSION['user'] = $user;

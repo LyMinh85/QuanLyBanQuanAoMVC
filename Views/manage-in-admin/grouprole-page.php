@@ -100,7 +100,8 @@
                             console.log(result);
 
                             $.ajax({
-                                url:"<?php echo Config::getUrl("/administrator/group-roles")?>",
+                                alert("Success");
+                                url:"<?php echo Config::getUrl("/administrator/manage-grouprole")?>",
                                 success: function(result){
                                     $("#content").html(result);
                                 }
@@ -153,14 +154,13 @@
                             $("#"+result.split("+")[1].trim()).focus();
                             alert(result.split("+")[2].trim());
                         } else {
-                            console.log(result);
-
-                            // $.ajax({
-                            //     url:"<?php echo Config::getUrl("/administrator/group-roles")?>",
-                            //     success: function(result){
-                            //         $("#content").html(result);
-                            //     }
-                            // })
+                            alert("Update success");
+                            $.ajax({
+                                url:"<?php echo Config::getUrl("/administrator/manage-grouprole")?>",
+                                success: function(result){
+                                    $("#content").html(result);
+                                }
+                            })
                         }
                     }
                 })

@@ -73,7 +73,7 @@
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="<?php echo Config::getUrl('/logout') ?>">Logout</a></li>
 
-                            <?php if($user['username'] == "admin"):?>
+                            <?php if($user['id_group_role'] != 1000 ):?>
                                 <li><a class="dropdown-item" href="<?php echo Config::getUrl('/administrator') ?>">Admin</a></li>
                             <?php endif;?>
 

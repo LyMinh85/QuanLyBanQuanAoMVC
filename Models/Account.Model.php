@@ -69,8 +69,21 @@ class AccountModel
     public function addAccount(string    $username, string $password, string $name, string $gender,
                                \DateTime $birthday, string $phone, string $address, string $email): bool
     {
-        $sql = "INSERT INTO account(username, password, name, gender, birthday, phone, address, email) values (?, ?, ?, ?, ?, ?, ?, ?)";
-        $result = DB::getDB()->execute_query($sql, [$username, $password, $name, $gender, $birthday->format('Y-m-d'), $phone, $address, $email]);
+        $sql = "INSERT INTO account(username, password, name, gender, birthday, phone, address, email,id_group_roles) values (?, ?, ?, ?, ?, ?, ?, ?,?)";
+        $result = DB::getDB()->execute_query($sql, [$username, $password, $name, $gender, $birthday->format('Y-m-d'), $phone, $address, $email,1000]);
+        if (!$result)
+            return false;
+
+        if (DB::getDB()->insert_id)
+            return true;
+        return false;
+    }
+
+    public function addAccountFromAdmin(string    $username, string $password, string $name, string $gender,
+                               \DateTime $birthday, string $phone, string $address, string $email,int $idGroupRole): bool
+    {
+        $sql = "INSERT INTO account(username, password, name, gender, birthday, phone, address, email,id_group_role) values (?, ?, ?, ?, ?, ?, ?, ?,?)";
+        $result = DB::getDB()->execute_query($sql, [$username, $password, $name, $gender, $birthday->format('Y-m-d'), $phone, $address, $email,$idGroupRole]);
         if (!$result)
             return false;
 
@@ -91,6 +104,31 @@ class AccountModel
             $account->phone,
             $account->address,
             $account->email,
+            $account->id_account
+        ]);
+        if (!$result)
+            return false;
+
+        if (DB::getDB()->affected_rows > 0) {
+            return true;
+        }
+
+        return false;
+
+    }
+
+    public function updateAccountFromAdmin(Account $account): bool
+    {
+        $sql = "UPDATE account SET username = ?, password = ?, name = ?, gender = ?, phone = ?, address = ?, email = ?, id_group_roles=? WHERE id_account = ?";
+        $result = DB::getDB()->execute_query($sql, [
+            $account->username,
+            $account->password,
+            $account->name,
+            $account->gender,
+            $account->phone,
+            $account->address,
+            $account->email,
+            $account->id_group_roles,
             $account->id_account
         ]);
         if (!$result)
